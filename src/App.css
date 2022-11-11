@@ -1,4 +1,9 @@
-
+body {
+  background:radial-gradient(circle, #12498c 0.1%, #1e1e1e 100%) !important;
+}
+.nav-bar-section .navbar-brand, .nav-bar-section .nav-link{
+  color: whitesmoke !important;
+}
 .center{
   margin: 0;
     text-align: center;
