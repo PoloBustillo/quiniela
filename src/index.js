@@ -4,11 +4,12 @@ import "./index.css";
 import App from "./App";
 import "bootstrap/dist/css/bootstrap.min.css";
 
-import { createBrowserRouter, RouterProvider, Route } from "react-router-dom";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { NotFound } from "./pages/NotFound";
 import { Pronosticos } from "./pages/Pronosticos";
 import { Resultados } from "./pages/Resultados";
 import { AuthProvider } from "./context/authContext";
+import { ProtectedRoute } from "./pages/ProtectedRoute";
 
 const router = createBrowserRouter([
   {
@@ -18,12 +19,20 @@ const router = createBrowserRouter([
   },
   {
     path: "/mis-pronosticos",
-    element: <Pronosticos />,
+    element: (
+      <ProtectedRoute>
+        <Pronosticos />
+      </ProtectedRoute>
+    ),
     errorElement: <NotFound></NotFound>,
   },
   {
     path: "/resultados",
-    element: <Resultados />,
+    element: (
+      <ProtectedRoute>
+        <Resultados />
+      </ProtectedRoute>
+    ),
     errorElement: <NotFound></NotFound>,
   },
 ]);

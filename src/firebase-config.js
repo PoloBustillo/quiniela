@@ -1,16 +1,18 @@
 import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
-
+import { getFirestore } from "firebase/firestore";
 // Your web app's Firebase configuration
 const firebaseConfig = {
-  apiKey: "AIzaSyAyb2ix_KNr4VzM3SA-ANHZR3Cxwsg4VT0",
-  authDomain: "quiniela-f4514.firebaseapp.com",
-  projectId: "quiniela-f4514",
-  storageBucket: "quiniela-f4514.appspot.com",
-  messagingSenderId: "860960771708",
-  appId: "1:860960771708:web:4d70d0eda2328163f203f9",
+  apiKey: "AIzaSyDVa7qtEUjOjYq3AvqJme6GO40AhHW6eA0",
+  authDomain: "quiniela-mundial-84bbb.firebaseapp.com",
+  projectId: "quiniela-mundial-84bbb",
+  storageBucket: "quiniela-mundial-84bbb.appspot.com",
+  messagingSenderId: "616199063502",
+  appId: "1:616199063502:web:6e1e561161bcafe9120d9f",
+  measurementId: "G-5V8CZXWQTD",
 };
 
 // Initialize Firebase
 export const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);
+export const db = getFirestore(app);

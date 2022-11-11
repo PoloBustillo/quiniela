@@ -2,11 +2,22 @@ import "./App.css";
 import { SignInOut } from "./components/SignInOut";
 import { Card, Col, Row, Toast, ToastContainer } from "react-bootstrap";
 import { Layout } from "./pages/Layout";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useAuth } from "./context/authContext";
+import { useNavigate } from "react-router-dom";
+
 let date = new Date().toLocaleDateString();
 
 function App() {
   const [show, setShow] = useState(false);
+  const navigation = useNavigate();
+  const { user } = useAuth();
+
+  useEffect(() => {
+    if (user) {
+      navigation("/mis-pronosticos");
+    }
+  }, [user]);
 
   return (
     <Layout>

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Button, Row, Col, Form } from "react-bootstrap";
+import { Button, Row, Col, Form, Alert } from "react-bootstrap";
 import { useAuth } from "../context/authContext";
 import { useNavigate } from "react-router-dom";
 
@@ -21,12 +21,8 @@ export const SignInOut = () => {
           <Button
             onClick={async () => {
               try {
-                let response = await signFacebook();
-                console.log(response.user);
-                navigation("/mis-pronosticos");
+                signFacebook();
               } catch (error) {
-                console.log(error);
-
                 setError(error);
               }
             }}
@@ -41,12 +37,8 @@ export const SignInOut = () => {
             variant="outline-light"
             onClick={async () => {
               try {
-                let response = await signGoogle();
-                console.log(response.user);
-                navigation("/mis-pronosticos");
+                signGoogle();
               } catch (error) {
-                console.log(error);
-
                 setError(error);
               }
             }}
@@ -55,7 +47,7 @@ export const SignInOut = () => {
           </Button>
         </Col>
         <Col></Col>
-        {error}
+        {error && <Alert variant="danger">{JSON.stringify(error)}</Alert>}
       </Row>
     </Form>
   );
