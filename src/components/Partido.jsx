@@ -1,32 +1,38 @@
 import React from "react";
 import { Button, Card, Col, Row } from "react-bootstrap";
 
-export const Partido = () => {
+export const Partido = ({ partido }) => {
+  console.log(partido);
   return (
-    <Row className="my-3 bg-black">
+    <Row className="my-3 ">
       <Col style={{ color: "whitesmoke" }}>
-        <Card className="text-center">
-          <Card.Header style={{ color: "black" }}>Local</Card.Header>
+        <Card className="text-center" bg="transparent">
+          <Card.Header
+            className="text-muted"
+            style={{ color: "whitesmoke" }}
+          >{`${partido.location}-${partido.venue}`}</Card.Header>
           <Card.Body style={{ backgroundColor: "rgb(30,30,30)" }}>
-            <Card.Title>ARGENTINA</Card.Title>
-            <Card.Text>
-              <img src="/flags/ARG.svg"></img>
-            </Card.Text>
-            <Button variant="primary">Go somewhere</Button>
-          </Card.Body>
-          <Card.Footer className="text-muted">2 days ago</Card.Footer>
-        </Card>
-      </Col>
-      <Col sm={2}>VS</Col>
-      <Col style={{ color: "whitesmoke" }}>
-        <Card className="text-center">
-          <Card.Header style={{ color: "black" }}>Visitante</Card.Header>
-          <Card.Body style={{ backgroundColor: "rgb(30,30,30)" }}>
-            <Card.Title>ALEMANIA</Card.Title>
-            <Card.Text>
-              <img src="/flags/GER.svg"></img>
-            </Card.Text>
-            <Button variant="primary">Go somewhere</Button>
+            <Row>
+              <Col>
+                <div>{partido.home_team.name.toUpperCase()}</div>
+                <img
+                  style={{ width: "30%" }}
+                  src={`/flags/${partido.home_team_country}.svg`}
+                ></img>
+                <Button variant="primary">Go somewhere</Button>
+              </Col>
+              <Col>
+                <img style={{ width: "100%" }} src="/flags/vs.png"></img>
+              </Col>
+              <Col>
+                <div>{partido.away_team.name.toUpperCase()}</div>
+                <img
+                  style={{ width: "30%" }}
+                  src={`/flags/${partido.away_team_country}.svg`}
+                ></img>
+                <Button variant="primary">Go somewhere</Button>
+              </Col>
+            </Row>
           </Card.Body>
           <Card.Footer className="text-muted">2 days ago</Card.Footer>
         </Card>

@@ -3,13 +3,14 @@ import ReactDOM from "react-dom/client";
 import "./index.css";
 import App from "./App";
 import "bootstrap/dist/css/bootstrap.min.css";
-
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { NotFound } from "./pages/NotFound";
 import { Pronosticos } from "./pages/Pronosticos";
 import { Resultados } from "./pages/Resultados";
 import { AuthProvider } from "./context/authContext";
 import { ProtectedRoute } from "./pages/ProtectedRoute";
+import store from "./redux/store";
+import { Provider } from "react-redux";
 
 const router = createBrowserRouter([
   {
@@ -39,8 +40,10 @@ const router = createBrowserRouter([
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
-    <AuthProvider>
-      <RouterProvider router={router} />
-    </AuthProvider>
+    <Provider store={store}>
+      <AuthProvider>
+        <RouterProvider router={router} />
+      </AuthProvider>
+    </Provider>
   </React.StrictMode>
 );

@@ -12,6 +12,19 @@ body {
   left: 50%;
   transform: translate(-50%, -50%);
 }
+.accordion-button{
+  background-color: transparent !important;
+  color: whitesmoke;
+}
+.accordion-button:not(.collapsed)::after{
+  background-image: none !important;
+  color: whitesmoke;
+}
+.accordion-button::after{
+  background-image: none !important;
+  color: white;
+}
+
 .center-div{
   margin: auto;
 

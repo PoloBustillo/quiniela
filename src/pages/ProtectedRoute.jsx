@@ -1,4 +1,5 @@
 import React from "react";
+import { Spinner } from "react-bootstrap";
 import { Navigate } from "react-router-dom";
 import { useAuth } from "../context/authContext";
 
@@ -7,7 +8,12 @@ export const ProtectedRoute = ({ children }) => {
   console.log(user);
   console.log(loading);
 
-  if (loading) return <div style={{ color: "white" }}>LOADING</div>;
+  if (loading)
+    return (
+      <div className="center">
+        <Spinner animation="border" variant="light" />
+      </div>
+    );
   if (!user) return <Navigate to="/"></Navigate>;
   return <>{children}</>;
 };

@@ -6,17 +6,7 @@ import {
   FacebookAuthProvider,
   onAuthStateChanged,
 } from "firebase/auth";
-import { collection, getDocs } from "firebase/firestore";
-import { db } from "../firebase-config";
 
-const addTodo = async () => {
-  try {
-    const docRef = await getDocs(collection(db, "testing"));
-    console.log("Document written with ID: ", docRef.docs);
-  } catch (e) {
-    console.error("Error adding document: ", e);
-  }
-};
 const providerGoogle = new GoogleAuthProvider();
 const providerFacebook = new FacebookAuthProvider();
 export const authContext = createContext();
