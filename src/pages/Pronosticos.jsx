@@ -1,17 +1,14 @@
-import React, { useEffect } from "react";
-import { Button, Container, Navbar, Row, Spinner } from "react-bootstrap";
+import React from "react";
+import { Button, Col, Container, Navbar, Row, Spinner } from "react-bootstrap";
 import { Layout } from "./Layout";
 import CryptoJS from "crypto-js";
-import {
-  useGetPartidosQuery,
-  useLazyGetTimeQuery,
-} from "../redux/firebase/api";
+import { useGetPartidosQuery } from "../redux/firebase/api";
 import { DiaDePartidos } from "../components/DiaDePartidos";
 
 export const Pronosticos = () => {
-  const { data: partidos, isLoading } = useGetPartidosQuery();
-  const [getTime] = useLazyGetTimeQuery();
-  console.log(partidos);
+  const { data: partidosByDay, isLoading } = useGetPartidosQuery();
+  //const [getTime] = useLazyGetTimeQuery();
+  //console.log(partidosByDay);
 
   // useEffect(() => {
   //   // Encrypt
@@ -21,22 +18,27 @@ export const Pronosticos = () => {
   // }, []);
   return (
     <Layout>
-      <Container style={{ height: "110vh" }}>
+      <Container fluid>
         {isLoading ? (
           <div className="center">
             <Spinner animation="border" variant="light" />
           </div>
         ) : (
-          <>
-            {Object.keys(partidos).map((dia) => {
-              return (
-                <DiaDePartidos
-                  partidosDelDia={partidos[dia]}
-                  dia={dia}
-                ></DiaDePartidos>
-              );
+          <Row>
+            {partidosByDay.map((partidos) => {
+              if (partidos.length > 0)
+                return (
+                  <Col sm={6}>
+                    <DiaDePartidos
+                      key={partidos[0].id}
+                      partidosDelDia={partidos}
+                      dia={partidos[0].datetime}
+                    ></DiaDePartidos>
+                  </Col>
+                );
+              return null;
             })}
-          </>
+          </Row>
         )}
         <Navbar className="w-100 mt-3" fixed="bottom">
           <Button className="my-4 center-div w-50 h-100" variant="success">

@@ -1,8 +1,10 @@
 import React from "react";
-import { Accordion, Card } from "react-bootstrap";
+import { Accordion, Card, Row } from "react-bootstrap";
 import { Partido } from "./Partido";
 
 export const DiaDePartidos = ({ partidosDelDia, dia }) => {
+  console.log(partidosDelDia);
+  console.log(dia);
   var options = {
     weekday: "long",
     month: "long",
@@ -13,6 +15,7 @@ export const DiaDePartidos = ({ partidosDelDia, dia }) => {
 
   return (
     <Accordion
+      className="mx-4"
       defaultActiveKey={today}
       style={{ backgroundColor: "transparent" }}
     >
@@ -27,9 +30,11 @@ export const DiaDePartidos = ({ partidosDelDia, dia }) => {
           >{`${date[0].toUpperCase()}${date.slice(1)}`}</span>
         </Accordion.Header>
         <Accordion.Body>
-          {partidosDelDia.map((partido) => {
-            return <Partido partido={partido}></Partido>;
-          })}
+          <Row>
+            {partidosDelDia.map((partido) => {
+              return <Partido key={partido.id} partido={partido}></Partido>;
+            })}
+          </Row>
         </Accordion.Body>
       </Accordion.Item>
     </Accordion>

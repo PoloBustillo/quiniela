@@ -4,6 +4,11 @@ body {
 .nav-bar-section .navbar-brand, .nav-bar-section .nav-link{
   color: whitesmoke !important;
 }
+.accordion{
+  border-color: blueviolet !important;
+  --bs-accordion-border-color: #606060 !important;
+}
+
 .center{
   margin: 0;
     text-align: center;
