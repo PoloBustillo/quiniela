@@ -3,8 +3,6 @@ import { Accordion, Card, Row } from "react-bootstrap";
 import { Partido } from "./Partido";
 
 export const DiaDePartidos = ({ partidosDelDia, dia }) => {
-  console.log(partidosDelDia);
-  console.log(dia);
   var options = {
     weekday: "long",
     month: "long",
@@ -12,7 +10,7 @@ export const DiaDePartidos = ({ partidosDelDia, dia }) => {
   };
   let date = new Date(dia).toLocaleDateString("es-US", options);
   let today = new Date().toLocaleDateString("es-US", options);
-
+  let arrayForSort = [...partidosDelDia];
   return (
     <Accordion
       className="mx-4"
@@ -25,15 +23,19 @@ export const DiaDePartidos = ({ partidosDelDia, dia }) => {
         style={{ backgroundColor: "transparent" }}
       >
         <Accordion.Header style={{ backgroundColor: "transparent" }}>
-          <span
-            style={{ color: "white", textAlign: "center" }}
-          >{`${date[0].toUpperCase()}${date.slice(1)}`}</span>
+          <span style={{ color: "white", textAlign: "center" }}>
+            {`${date[0].toUpperCase()}${date.slice(1)} `}
+          </span>
         </Accordion.Header>
         <Accordion.Body>
           <Row>
-            {partidosDelDia.map((partido) => {
-              return <Partido key={partido.id} partido={partido}></Partido>;
-            })}
+            {arrayForSort
+              .sort((a, b) => {
+                return new Date(a.datetime) - new Date(b.datetime);
+              })
+              .map((partido) => {
+                return <Partido key={partido.id} partido={partido}></Partido>;
+              })}
           </Row>
         </Accordion.Body>
       </Accordion.Item>

@@ -11,7 +11,7 @@ export const api = createApi({
     getTime: build.query({
       async queryFn(body, _queryApi, _extraOptions, baseQuery) {
         let response = await fetch(
-          "http://worldtimeapi.org/api/timezone/America/Mexico_City"
+          "https://worldtimeapi.org/api/timezone/America/Mexico_City"
         );
         let data = await response.json();
         return { data };
@@ -48,7 +48,7 @@ export const api = createApi({
             return new Date(a[0].datetime) - new Date(b[0].datetime);
           });
           let response = await fetch(
-            "http://worldtimeapi.org/api/timezone/America/Mexico_City"
+            "https://worldtimeapi.org/api/timezone/America/Mexico_City"
           );
           let time = await response.json();
           filterSortArrayByDay = sortArrayByDay.map((partidosByDay) => {

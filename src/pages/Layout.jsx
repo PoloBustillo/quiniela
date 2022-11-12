@@ -39,6 +39,7 @@ export const Layout = ({ children }) => {
                 <img
                   src={`${user?.photoURL}`}
                   alt="Avatar"
+                  referrerpolicy="no-referrer"
                   className="avatar"
                 ></img>
               </Nav.Link>

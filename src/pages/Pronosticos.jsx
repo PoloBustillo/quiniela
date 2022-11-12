@@ -28,7 +28,7 @@ export const Pronosticos = () => {
             {partidosByDay.map((partidos) => {
               if (partidos.length > 0)
                 return (
-                  <Col sm={6}>
+                  <Col sm={6} key={partidos[0].id}>
                     <DiaDePartidos
                       key={partidos[0].id}
                       partidosDelDia={partidos}
