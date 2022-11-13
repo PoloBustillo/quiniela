@@ -68,7 +68,6 @@ export const api = createApi({
     }),
     updatePronosticosFirebase: build.mutation({
       queryFn: async ({ body, userId }) => {
-        console.log("MUTATE");
         let data = null;
         try {
           CryptoJS.pad.NoPadding = {

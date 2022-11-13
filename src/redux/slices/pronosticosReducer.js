@@ -10,7 +10,6 @@ export const pronosticosSlice = createSlice({
   initialState,
   reducers: {
     initPronosticos: (state, action) => {
-      console.log(action);
       var decrypted = CryptoJS.AES.decrypt(action.payload.data, key).toString(
         CryptoJS.enc.Utf8
       );

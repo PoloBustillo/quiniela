@@ -21,6 +21,7 @@ export const Equipos = ({ country, name, home }) => {
         <img
           style={{ width: "100%", margin: "auto" }}
           src={`/flags/${country}.svg`}
+          alt={country}
         ></img>
       </Col>
     </Row>

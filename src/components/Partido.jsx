@@ -12,10 +12,14 @@ export const Partido = ({ partido }) => {
     (state) => state.pronosticosSlice.pronosticos
   );
   const [scoreHome, setScoreHome] = useState(
-    pronosticos[partido.id] ? pronosticos[partido.id].home_score : 0
+    pronosticos[partido.id]
+      ? Number.parseInt(pronosticos[partido.id].home_score)
+      : 0
   );
   const [scoreAway, setScoreAway] = useState(
-    pronosticos[partido.id] ? pronosticos[partido.id].away_score : 0
+    pronosticos[partido.id]
+      ? Number.parseInt(pronosticos[partido.id].away_score)
+      : 0
   );
 
   return (
@@ -73,6 +77,7 @@ export const Partido = ({ partido }) => {
                   <div className="center" style={{ zIndex: "1", top: "40%" }}>
                     <img
                       style={{ width: "55%", zIndex: "10" }}
+                      alt="VERSUS"
                       src="/flags/vs.png"
                     ></img>
                   </div>

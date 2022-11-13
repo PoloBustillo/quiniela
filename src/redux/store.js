@@ -4,6 +4,7 @@ import { api } from "./firebase/api";
 import pronosticosSlice from "./slices/pronosticosReducer";
 
 const store = configureStore({
+  devTools: process.env.NODE_ENV !== "production",
   reducer: {
     [api.reducerPath]: api.reducer,
     pronosticosSlice,
