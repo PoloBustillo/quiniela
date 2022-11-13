@@ -53,15 +53,21 @@ export const Partido = ({ partido }) => {
                 <Col>
                   <Form.Control
                     type="number"
-                    style={{ textAlign: "center", zIndex: "1000" }}
+                    style={{ textAlign: "center" }}
                     value={scoreHome}
                     onChange={(e) => {
+                      if (e.target.value === "") {
+                        setScoreHome(0);
+                      }
                       if (Number.parseInt(e.target.value) >= 0) {
-                        setScoreHome(e.target.value);
+                        setScoreHome(
+                          Number.parseInt(e.target.value).toFixed(0)
+                        );
                         dispatch(
                           updatePronosticos({
                             partidoId: partido.id,
-                            home_score: e.target.value,
+                            home_score: Number.parseInt(e.target.value),
+                            away_score: Number.parseInt(scoreAway),
                           })
                         );
                       }
@@ -97,12 +103,18 @@ export const Partido = ({ partido }) => {
                     aria-label="Goles"
                     value={scoreAway}
                     onChange={(e) => {
+                      if (e.target.value === "") {
+                        setScoreAway(0);
+                      }
                       if (Number.parseInt(e.target.value) >= 0) {
-                        setScoreAway(e.target.value);
+                        setScoreAway(
+                          Number.parseInt(e.target.value).toFixed(0)
+                        );
                         dispatch(
                           updatePronosticos({
                             partidoId: partido.id,
-                            away_score: e.target.value,
+                            away_score: Number.parseInt(e.target.value),
+                            home_score: Number.parseInt(scoreHome),
                           })
                         );
                       }

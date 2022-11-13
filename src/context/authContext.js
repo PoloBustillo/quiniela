@@ -39,7 +39,7 @@ export function AuthProvider({ children }) {
           if (mis_pronosticos) {
             dispatch(initPronosticos(mis_pronosticos));
           } else {
-            setDoc(pronosticosRef, {});
+            setDoc(pronosticosRef, { active: false });
             dispatch(initPronosticos([]));
           }
         } catch (error) {

@@ -26,6 +26,7 @@ export const Pronosticos = () => {
   const pronosticos = useSelector(
     (state) => state.pronosticosSlice.pronosticos
   );
+  const active = useSelector((state) => state.pronosticosSlice.active);
   const { user } = useAuth();
 
   return (
@@ -90,10 +91,15 @@ export const Pronosticos = () => {
             })}
           </Row>
         )}
+        <div style={{ height: "100px" }}></div>
         <Navbar className="w-100 mt-3" fixed="bottom">
           <Button
             onClick={async () => {
-              updatePronosticos({ body: pronosticos, userId: user.uid })
+              updatePronosticos({
+                body: pronosticos,
+                userId: user.uid,
+                active: active,
+              })
                 .unwrap()
                 .then((data) => {
                   setShowToast(true);

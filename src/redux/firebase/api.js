@@ -7,7 +7,7 @@ const key = "11B61F47CF1E7D3B93B8527C6352D";
 
 export const api = createApi({
   reducerPath: "firestore",
-  baseQuery: fakeBaseQuery({ baseUrl: "/" }),
+  baseQuery: fakeBaseQuery(),
   endpoints: (build) => ({
     getTime: build.query({
       async queryFn(body, _queryApi, _extraOptions, baseQuery) {
@@ -48,15 +48,20 @@ export const api = createApi({
           sortArrayByDay = arrayByDay.sort((a, b) => {
             return new Date(a[0].datetime) - new Date(b[0].datetime);
           });
-          let response = await fetch(
-            "https://worldtimeapi.org/api/timezone/America/Mexico_City"
-          );
-          let time = await response.json();
+          let time = "";
+          try {
+            let response = await fetch(
+              "https://worldtimeapi.org/api/timezone/America/Mexico_City"
+            );
+            time = await response.json();
+            time = time.utc_datetime;
+          } catch (error) {
+            time = new Date().toUTCString();
+          }
+
           filterSortArrayByDay = sortArrayByDay.map((partidosByDay) => {
             return partidosByDay.filter((partido) => {
-              return (
-                new Date(time.utc_datetime) - new Date(partido.datetime) < 0
-              );
+              return new Date(time) - new Date(partido.datetime) < 0;
             });
           });
         } catch (e) {
@@ -67,7 +72,7 @@ export const api = createApi({
       },
     }),
     updatePronosticosFirebase: build.mutation({
-      queryFn: async ({ body, userId }) => {
+      queryFn: async ({ body, userId, active }) => {
         let data = null;
         try {
           CryptoJS.pad.NoPadding = {
@@ -76,7 +81,7 @@ export const api = createApi({
           };
           data = CryptoJS.AES.encrypt(JSON.stringify(body), key).toString();
           const pronosticosRef = doc(db, "pronosticos", userId);
-          setDoc(pronosticosRef, { data: data });
+          setDoc(pronosticosRef, { data: data, active: active });
         } catch (error) {
           console.log(error);
           return { error: error };

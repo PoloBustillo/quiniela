@@ -5,14 +5,27 @@ import { Layout } from "./pages/Layout";
 import { useEffect, useState } from "react";
 import { useAuth } from "./context/authContext";
 import { useNavigate } from "react-router-dom";
+import { getTokenFirebase, onMessageListener } from "./firebase-config";
 
 let date = new Date().toLocaleDateString();
 
 function App() {
+  const [isTokenFound, setTokenFound] = useState(false);
+
   const [show, setShow] = useState(false);
   const navigation = useNavigate();
   const { user } = useAuth();
 
+  onMessageListener()
+    .then((payload) => {
+      setShow(true);
+      console.log(payload);
+    })
+    .catch((err) => console.log("failed: ", err));
+
+  useEffect(() => {
+    getTokenFirebase(setTokenFound);
+  }, []);
   useEffect(() => {
     if (user) {
       navigation("/mis-pronosticos");

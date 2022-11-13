@@ -4,6 +4,10 @@ body {
 .nav-bar-section .navbar-brand, .nav-bar-section .nav-link{
   color: whitesmoke !important;
 }
+.table-striped>tbody>tr:nth-child(odd)>td,
+.table-striped>tbody>tr:nth-child(odd)>th {
+  background-color: rgb(248, 220, 240); 
+}
 .accordion{
   border-color: blueviolet !important;
   --bs-accordion-border-color: #606060 !important;
