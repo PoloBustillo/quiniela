@@ -1,13 +1,23 @@
-import React from "react";
-import { faClock, faTShirt, faShirt } from "@fortawesome/free-solid-svg-icons";
+import React, { useState } from "react";
+import { faClock } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Card, Col, Form, Row } from "react-bootstrap";
 import { Equipos } from "./Equipos";
 import { updatePronosticos } from "../redux/slices/pronosticosReducer";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
 export const Partido = ({ partido }) => {
   const dispatch = useDispatch();
+  const pronosticos = useSelector(
+    (state) => state.pronosticosSlice.pronosticos
+  );
+  const [scoreHome, setScoreHome] = useState(
+    pronosticos[partido.id] ? pronosticos[partido.id].home_score : 0
+  );
+  const [scoreAway, setScoreAway] = useState(
+    pronosticos[partido.id] ? pronosticos[partido.id].away_score : 0
+  );
+
   return (
     <Col sm={12} style={{ color: "whitesmoke", borderColor: "blueviolet" }}>
       <Card
@@ -39,15 +49,18 @@ export const Partido = ({ partido }) => {
                 <Col>
                   <Form.Control
                     type="number"
-                    style={{ textAlign: "center" }}
+                    style={{ textAlign: "center", zIndex: "1000" }}
+                    value={scoreHome}
                     onChange={(e) => {
-                      console.log(e.target.value);
-                      dispatch(
-                        updatePronosticos({
-                          partido: partido.id,
-                          home_score: e.target.value,
-                        })
-                      );
+                      if (Number.parseInt(e.target.value) >= 0) {
+                        setScoreHome(e.target.value);
+                        dispatch(
+                          updatePronosticos({
+                            partidoId: partido.id,
+                            home_score: e.target.value,
+                          })
+                        );
+                      }
                     }}
                     aria-label="Goles"
                   />
@@ -55,12 +68,16 @@ export const Partido = ({ partido }) => {
               </Row>
             </Col>
             <Col xs={2}>
-              <div className="center">
-                <img
-                  style={{ width: "55%", zIndex: "1000" }}
-                  src="/flags/vs.png"
-                ></img>
-              </div>
+              <Row>
+                <Col>
+                  <div className="center" style={{ zIndex: "1", top: "40%" }}>
+                    <img
+                      style={{ width: "55%", zIndex: "10" }}
+                      src="/flags/vs.png"
+                    ></img>
+                  </div>
+                </Col>
+              </Row>
             </Col>
             <Col xs={5}>
               <Equipos
@@ -71,16 +88,19 @@ export const Partido = ({ partido }) => {
                 <Col>
                   <Form.Control
                     type="number"
-                    style={{ textAlign: "center" }}
+                    style={{ textAlign: "center", zIndex: "1000" }}
                     aria-label="Goles"
+                    value={scoreAway}
                     onChange={(e) => {
-                      console.log(e.target.value);
-                      dispatch(
-                        updatePronosticos({
-                          partido: partido.id,
-                          away_score: e.target.value,
-                        })
-                      );
+                      if (Number.parseInt(e.target.value) >= 0) {
+                        setScoreAway(e.target.value);
+                        dispatch(
+                          updatePronosticos({
+                            partidoId: partido.id,
+                            away_score: e.target.value,
+                          })
+                        );
+                      }
                     }}
                   />
                 </Col>

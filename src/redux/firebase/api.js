@@ -1,8 +1,9 @@
 import { createApi, fakeBaseQuery } from "@reduxjs/toolkit/query/react";
-import { collection, getDocs } from "firebase/firestore";
+import { collection, getDocs, doc, setDoc } from "firebase/firestore";
 import { db } from "../../firebase-config";
-
+import CryptoJS from "crypto-js";
 const partidosRef = collection(db, "partidos");
+const key = "11B61F47CF1E7D3B93B8527C6352D";
 
 export const api = createApi({
   reducerPath: "firestore",
@@ -65,6 +66,30 @@ export const api = createApi({
         return { data: filterSortArrayByDay };
       },
     }),
+    updatePronosticosFirebase: build.mutation({
+      queryFn: async ({ body, userId }) => {
+        console.log("MUTATE");
+        let data = null;
+        try {
+          CryptoJS.pad.NoPadding = {
+            pad: function () {},
+            unpad: function () {},
+          };
+          data = CryptoJS.AES.encrypt(JSON.stringify(body), key).toString();
+          const pronosticosRef = doc(db, "pronosticos", userId);
+          setDoc(pronosticosRef, { data: data });
+        } catch (error) {
+          console.log(error);
+          return { error: error };
+        }
+
+        return { data: data };
+      },
+    }),
   }),
 });
-export const { useGetPartidosQuery, useLazyGetTimeQuery } = api;
+export const {
+  useGetPartidosQuery,
+  useLazyGetTimeQuery,
+  useUpdatePronosticosFirebaseMutation,
+} = api;

@@ -1,21 +1,25 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Button, Col, Container, Navbar, Row, Spinner } from "react-bootstrap";
 import { Layout } from "./Layout";
-import CryptoJS from "crypto-js";
-import { useGetPartidosQuery } from "../redux/firebase/api";
+import {
+  useGetPartidosQuery,
+  useLazyGetTimeQuery,
+  useUpdatePronosticosFirebaseMutation,
+} from "../redux/firebase/api";
 import { DiaDePartidos } from "../components/DiaDePartidos";
+import { useSelector } from "react-redux";
+import { useAuth } from "../context/authContext";
 
 export const Pronosticos = () => {
   const { data: partidosByDay, isLoading } = useGetPartidosQuery();
-  //const [getTime] = useLazyGetTimeQuery();
-  //console.log(partidosByDay);
+  const [updatePronosticos] = useUpdatePronosticosFirebaseMutation();
+  const pronosticos = useSelector(
+    (state) => state.pronosticosSlice.pronosticos
+  );
+  const { user } = useAuth();
 
-  // useEffect(() => {
-  //   // Encrypt
-  //   // var ciphertext = CryptoJS.AES.encrypt("my message", "secret key 123");
-  //   // console.log(ciphertext);
-  //   console.log(getTime());
-  // }, []);
+  const [getTime] = useLazyGetTimeQuery();
+
   return (
     <Layout>
       <Container fluid>
@@ -41,7 +45,13 @@ export const Pronosticos = () => {
           </Row>
         )}
         <Navbar className="w-100 mt-3" fixed="bottom">
-          <Button className="my-4 center-div w-50 h-100" variant="success">
+          <Button
+            onClick={() => {
+              updatePronosticos({ body: pronosticos, userId: user.uid });
+            }}
+            className="my-4 center-div w-50 h-100"
+            variant="success"
+          >
             Guardar Pronósticos
           </Button>
         </Navbar>
