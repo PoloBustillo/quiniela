@@ -1,5 +1,5 @@
 import { createApi, fakeBaseQuery } from "@reduxjs/toolkit/query/react";
-import { collection, getDocs, doc, setDoc } from "firebase/firestore";
+import { collection, getDocs, doc, updateDoc } from "firebase/firestore";
 import { db } from "../../firebase-config";
 import CryptoJS from "crypto-js";
 const partidosRef = collection(db, "partidos");
@@ -81,7 +81,8 @@ export const api = createApi({
           };
           data = CryptoJS.AES.encrypt(JSON.stringify(body), key).toString();
           const pronosticosRef = doc(db, "pronosticos", userId);
-          setDoc(pronosticosRef, { data: data, active: active });
+          //TODO: check data before encrypt
+          updateDoc(pronosticosRef, { data: data });
         } catch (error) {
           console.log(error);
           return { error: error };
