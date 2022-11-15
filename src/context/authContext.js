@@ -36,7 +36,7 @@ export function AuthProvider({ children }) {
           const pronosticosRef = doc(db, "pronosticos", user.uid);
           const docSnap = await getDoc(pronosticosRef);
           let mis_pronosticos = docSnap.data();
-          if (mis_pronosticos.data) {
+          if (mis_pronosticos?.data) {
             dispatch(initPronosticos(mis_pronosticos));
           } else {
             setDoc(pronosticosRef, { active: false, name: user.displayName });

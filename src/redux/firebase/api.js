@@ -95,7 +95,7 @@ export const api = createApi({
           }
           //TODO: change date
           let oldGames = partidos.filter((partido) => {
-            return new Date("11-22-2022") - new Date(partido.datetime) > 0;
+            return new Date(time) - new Date(partido.datetime) > 0;
           });
 
           const pronosticos = [];
@@ -134,7 +134,11 @@ export const api = createApi({
                         decrypted[partido.id].home_score
                     ) {
                       points = 2;
-                    } else if (predicted_winner === partido.winner) {
+                    } else if (
+                      predicted_winner === partido.winner &&
+                      partido.away_team.goals !== null &&
+                      partido.home_team.goals !== null
+                    ) {
                       points = 1;
                     }
                     return {

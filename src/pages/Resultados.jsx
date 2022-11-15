@@ -19,7 +19,7 @@ import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import Grid from "@mui/material/Grid";
 import { Avatar, Badge } from "@mui/material";
-import { green } from "@mui/material/colors";
+import { blue, green } from "@mui/material/colors";
 import { useAuth } from "../context/authContext";
 import { SmallAvatar, headCells, getMisPuntos } from "../utils";
 
@@ -87,8 +87,10 @@ function RowData(props) {
                             horizontal: "left",
                           }}
                           badgeContent={
-                            <SmallAvatar sx={{ bgcolor: green[500] }} alt={""}>
-                              {dataItem.data.home_real_goals}
+                            <SmallAvatar sx={{ bgcolor: blue[500] }}>
+                              {dataItem.data?.home_real_goals === null
+                                ? "-"
+                                : dataItem.data.home_real_goals}
                             </SmallAvatar>
                           }
                         >
@@ -105,7 +107,16 @@ function RowData(props) {
                             }
                           >
                             <Avatar
-                              style={{ border: "5px solid red" }}
+                              style={{
+                                border: `5px solid ${
+                                  dataItem.data.winner_real ===
+                                  dataItem.data.home_code
+                                    ? "green"
+                                    : dataItem.data.winner_real === null
+                                    ? "gray"
+                                    : "red"
+                                }`,
+                              }}
                               src={`/flags/${dataItem.data.home_code}.svg`}
                             />
                           </Badge>
@@ -117,8 +128,10 @@ function RowData(props) {
                             horizontal: "right",
                           }}
                           badgeContent={
-                            <SmallAvatar sx={{ bgcolor: green[500] }} alt={""}>
-                              {dataItem.data.away_real_goals}
+                            <SmallAvatar sx={{ bgcolor: blue[500] }} alt={""}>
+                              {dataItem.data.away_real_goals === null
+                                ? "-"
+                                : dataItem.data.away_real_goals}
                             </SmallAvatar>
                           }
                         >
@@ -134,8 +147,18 @@ function RowData(props) {
                               </SmallAvatar>
                             }
                           >
+                            {dataItem.data.points}pt
                             <Avatar
-                              style={{ border: "5px solid red" }}
+                              style={{
+                                border: `5px solid ${
+                                  dataItem.data.winner_real ===
+                                  dataItem.data.away_code
+                                    ? "green"
+                                    : dataItem.data.winner_real === null
+                                    ? "gray"
+                                    : "red"
+                                }`,
+                              }}
                               src={`/flags/${dataItem.data.away_code}.svg`}
                             />
                           </Badge>
