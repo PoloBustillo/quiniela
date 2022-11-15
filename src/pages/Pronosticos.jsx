@@ -1,9 +1,7 @@
 import React, { useState } from "react";
 import {
-  Button,
   Col,
   Container,
-  Navbar,
   Row,
   Spinner,
   Toast,
@@ -17,7 +15,17 @@ import {
 import { DiaDePartidos } from "../components/DiaDePartidos";
 import { useSelector } from "react-redux";
 import { useAuth } from "../context/authContext";
-
+import { AppBar, Fab, Toolbar } from "@mui/material";
+import { Save } from "@mui/icons-material";
+import styled from "@emotion/styled";
+const StyledFab = styled(Fab)({
+  position: "absolute",
+  zIndex: 1,
+  top: -30,
+  left: 0,
+  right: 0,
+  margin: "0 auto",
+});
 export const Pronosticos = () => {
   const [showToast, setShowToast] = useState(false);
   const [showFailToast, setShowFailToast] = useState(false);
@@ -73,7 +81,7 @@ export const Pronosticos = () => {
                   <strong className="me-auto">Mensaje del servidor</strong>
                   <small>Problema con datos</small>
                 </Toast.Header>
-                <Toast.Body>Contacte por whatsapp</Toast.Body>
+                <Toast.Body>Contacte por whatsapp 3317700339</Toast.Body>
               </Toast>
             </ToastContainer>
             {partidosByDay.map((partidos) => {
@@ -92,29 +100,33 @@ export const Pronosticos = () => {
           </Row>
         )}
         <div style={{ height: "100px" }}></div>
-        <Navbar className="w-100 mt-3" fixed="bottom">
-          <Button
-            onClick={async () => {
-              updatePronosticos({
-                body: pronosticos,
-                userId: user.uid,
-                active: active,
-              })
-                .unwrap()
-                .then((data) => {
-                  setShowToast(true);
-                })
-                .catch((error) => {
-                  console.log(error);
-                  setShowFailToast(true);
-                });
-            }}
-            className="my-4 center-div w-50 h-100"
-            variant="success"
-          >
-            Guardar Pronósticos
-          </Button>
-        </Navbar>
+        <AppBar
+          position="fixed"
+          color="primary"
+          sx={{ top: "auto", bottom: 0 }}
+        >
+          <Toolbar style={{ minHeight: "40px" }}>
+            <StyledFab color="secondary" aria-label="add">
+              <Save
+                onClick={async () => {
+                  updatePronosticos({
+                    body: pronosticos,
+                    userId: user.uid,
+                    active: active,
+                  })
+                    .unwrap()
+                    .then((data) => {
+                      setShowToast(true);
+                    })
+                    .catch((error) => {
+                      console.log(error);
+                      setShowFailToast(true);
+                    });
+                }}
+              />
+            </StyledFab>
+          </Toolbar>
+        </AppBar>
       </Container>
     </Layout>
   );

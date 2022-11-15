@@ -27,7 +27,7 @@ export const DiaDePartidos = ({ partidosDelDia, dia }) => {
             {`${date[0].toUpperCase()}${date.slice(1)} `}
           </span>
         </Accordion.Header>
-        <Accordion.Body>
+        <Accordion.Body style={{ padding: "0" }}>
           <Row>
             {arrayForSort
               .sort((a, b) => {

@@ -2,6 +2,7 @@ import React from "react";
 import { Col, Row } from "react-bootstrap";
 import { faTShirt } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { Avatar } from "@mui/material";
 export const Equipos = ({ country, name, home }) => {
   return (
     <Row>
@@ -12,17 +13,17 @@ export const Equipos = ({ country, name, home }) => {
           </>
         )}
         <span>{country}</span>
+
         {!home && (
           <>
             {" "}
             <FontAwesomeIcon icon={faTShirt} />
           </>
         )}
-        <img
-          style={{ width: "100%", margin: "auto" }}
+        <Avatar
+          style={{ margin: "auto" }}
           src={`/flags/${country}.svg`}
-          alt={country}
-        ></img>
+        ></Avatar>
       </Col>
     </Row>
   );

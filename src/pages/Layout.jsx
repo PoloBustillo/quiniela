@@ -2,34 +2,59 @@ import React from "react";
 import { Container, Nav, Navbar } from "react-bootstrap";
 import { signOut } from "firebase/auth";
 import { auth } from "../firebase-config";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/authContext";
+import {
+  Avatar,
+  Divider,
+  ToggleButton,
+  ToggleButtonGroup,
+} from "@mui/material";
+import { useDispatch } from "react-redux";
+import {
+  initPronosticos,
+  updatePronosticos,
+} from "../redux/slices/pronosticosReducer";
 
 export const Layout = ({ children }) => {
   const navigation = useNavigate();
+  const dispatch = useDispatch();
+  let location = useLocation();
+
+  const [alignment, setAlignment] = React.useState(location.pathname);
+  const handleChange = (event, newAlignment) => {
+    setAlignment(newAlignment);
+  };
   const { user } = useAuth();
   return (
     <Container fluid>
       <Navbar className="nav-bar-section">
         <Container>
-          <Nav className="me-auto">
-            <Nav.Link
+          <ToggleButtonGroup
+            color="secondary"
+            value={alignment}
+            exclusive
+            onChange={handleChange}
+          >
+            <ToggleButton
               onClick={() => {
                 navigation("/mis-pronosticos");
               }}
+              value="/mis-pronosticos"
             >
-              Pronósticos
-            </Nav.Link>
-          </Nav>
-          <Nav className="me-auto">
-            <Nav.Link
+              Pronosticos
+            </ToggleButton>
+            <ToggleButton
+              onChange={handleChange}
               onClick={() => {
                 navigation("/resultados");
               }}
+              value="/resultados"
             >
               Resultados
-            </Nav.Link>
-          </Nav>
+            </ToggleButton>
+          </ToggleButtonGroup>
+
           {user && (
             <>
               <Nav.Link
@@ -38,26 +63,29 @@ export const Layout = ({ children }) => {
                   navigation("/resultados");
                 }}
               >
-                <img
-                  src={`${user?.photoURL}`}
-                  alt="Avatar"
+                <Avatar
+                  alt=""
                   referrerPolicy="no-referrer"
-                  className="avatar"
-                ></img>
+                  src={`${user?.photoURL}`}
+                />
               </Nav.Link>
               <Nav>
-                <Nav.Link
+                <ToggleButton
                   className="d-flex"
                   onClick={() => {
                     signOut(auth);
                     navigation("/");
+                    dispatch(initPronosticos([]));
+                    dispatch(updatePronosticos([]));
                   }}
+                  value="salir"
                 >
                   Salir
-                </Nav.Link>
+                </ToggleButton>
               </Nav>
             </>
           )}
+          <Divider light />
         </Container>
       </Navbar>
       {children}

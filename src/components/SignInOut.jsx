@@ -1,7 +1,9 @@
 import React, { useState } from "react";
-import { Button, Row, Col, Form, Alert } from "react-bootstrap";
+import { Row, Col, Form, Alert } from "react-bootstrap";
+import Button from "@mui/material/Button";
 import { useAuth } from "../context/authContext";
 import { useNavigate } from "react-router-dom";
+import { Facebook, Google } from "@mui/icons-material";
 
 export const SignInOut = () => {
   const { signGoogle, signFacebook } = useAuth();
@@ -9,16 +11,16 @@ export const SignInOut = () => {
   const navigation = useNavigate();
   return (
     <Form>
-      <Row className="m-5">
-        <Col>
-          <h4 style={{ color: "white" }}>Entrar con algún método</h4>
-        </Col>
-      </Row>
-
-      <Row className="mb-3 text-center">
+      <Row className="my-5 text-center">
         <Col></Col>
         <Col>
           <Button
+            variant="outlined"
+            color="secondary"
+            style={{
+              color: "white",
+              borderColor: "white",
+            }}
             onClick={async () => {
               try {
                 signFacebook();
@@ -26,7 +28,7 @@ export const SignInOut = () => {
                 setError(error);
               }
             }}
-            variant="outline-light"
+            startIcon={<Facebook />}
           >
             Facebook
           </Button>
@@ -34,7 +36,12 @@ export const SignInOut = () => {
 
         <Col>
           <Button
-            variant="outline-light"
+            variant="outlined"
+            color="secondary"
+            style={{
+              color: "white",
+              borderColor: "white",
+            }}
             onClick={async () => {
               try {
                 signGoogle();
@@ -42,6 +49,7 @@ export const SignInOut = () => {
                 setError(error);
               }
             }}
+            startIcon={<Google />}
           >
             Google
           </Button>

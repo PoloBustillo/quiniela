@@ -5,6 +5,7 @@ import { Card, Col, Form, Row } from "react-bootstrap";
 import { Equipos } from "./Equipos";
 import { updatePronosticos } from "../redux/slices/pronosticosReducer";
 import { useDispatch, useSelector } from "react-redux";
+import { TextField } from "@mui/material";
 
 export const Partido = ({ partido }) => {
   const dispatch = useDispatch();
@@ -29,18 +30,7 @@ export const Partido = ({ partido }) => {
         bg="transparent"
         style={{ color: "whitesmoke", borderColor: "blueviolet" }}
       >
-        <Card.Header style={{ color: "whitesmoke !important" }}>
-          <Row>
-            <Col className="text-muted" style={{ textAlign: "left" }}>
-              <span>{partido.home_team.name}</span>
-            </Col>
-
-            <Col className="text-muted" style={{ textAlign: "right" }}>
-              <span>{partido.away_team.name}</span>
-            </Col>
-          </Row>
-        </Card.Header>
-        <Card.Body style={{ backgroundColor: "rgb(30,30,30)" }}>
+        <Card.Body style={{ borderColor: "none" }}>
           <Row>
             <Col xs={5}>
               <Equipos
@@ -51,9 +41,13 @@ export const Partido = ({ partido }) => {
 
               <Row className="my-1">
                 <Col>
-                  <Form.Control
+                  <TextField
+                    id="filled-number"
+                    label={partido.home_team.name}
                     type="number"
-                    style={{ textAlign: "center" }}
+                    InputLabelProps={{
+                      shrink: true,
+                    }}
                     value={scoreHome}
                     onChange={(e) => {
                       if (e.target.value === "") {
@@ -72,7 +66,7 @@ export const Partido = ({ partido }) => {
                         );
                       }
                     }}
-                    aria-label="Goles"
+                    variant="filled"
                   />
                 </Col>
               </Row>
@@ -97,10 +91,22 @@ export const Partido = ({ partido }) => {
               ></Equipos>
               <Row className="my-1">
                 <Col>
-                  <Form.Control
+                  <TextField
+                    id="filled-number"
+                    label={partido.away_team.name}
+                    InputProps={{
+                      inputProps: {
+                        style: { textAlign: "right" },
+                      },
+                    }}
                     type="number"
-                    style={{ textAlign: "center", zIndex: "1000" }}
-                    aria-label="Goles"
+                    InputLabelProps={{
+                      shrink: true,
+                      style: {
+                        textAlign: "right",
+                        width: "100%",
+                      },
+                    }}
                     value={scoreAway}
                     onChange={(e) => {
                       if (e.target.value === "") {
@@ -119,13 +125,12 @@ export const Partido = ({ partido }) => {
                         );
                       }
                     }}
+                    variant="filled"
                   />
                 </Col>
               </Row>
             </Col>
           </Row>
-        </Card.Body>
-        <Card.Footer>
           <Row>
             <Col style={{ fontSize: "20px" }}>
               <FontAwesomeIcon
@@ -145,15 +150,11 @@ export const Partido = ({ partido }) => {
             className="text-muted"
             style={{ fontSize: "15px", textAlign: "center" }}
           >
-            <Col>{`${partido.location}`}</Col>
+            <Col>
+              {`${partido.location}`} / {`${partido.venue}`}
+            </Col>
           </Row>
-          <Row
-            className="text-muted"
-            style={{ fontSize: "15px", textAlign: "center" }}
-          >
-            <Col>{`${partido.venue}`}</Col>
-          </Row>
-        </Card.Footer>
+        </Card.Body>
       </Card>
     </Col>
   );
