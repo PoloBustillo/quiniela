@@ -12,20 +12,22 @@ export const Layout = ({ children }) => {
     <Container fluid>
       <Navbar className="nav-bar-section">
         <Container>
-          <Navbar.Brand
-            onClick={() => {
-              navigation("/");
-            }}
-          >
-            Quiniela
-          </Navbar.Brand>
           <Nav className="me-auto">
             <Nav.Link
               onClick={() => {
                 navigation("/mis-pronosticos");
               }}
             >
-              {!user ? "Mis Pronósticos" : `Pronósticos(${user?.displayName})`}
+              Pronósticos
+            </Nav.Link>
+          </Nav>
+          <Nav className="me-auto">
+            <Nav.Link
+              onClick={() => {
+                navigation("/resultados");
+              }}
+            >
+              Resultados
             </Nav.Link>
           </Nav>
           {user && (

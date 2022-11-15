@@ -12,13 +12,11 @@ let date = new Date().toLocaleDateString();
 function App() {
   const [isTokenFound, setTokenFound] = useState(false);
 
-  const [show, setShow] = useState(false);
   const navigation = useNavigate();
   const { user } = useAuth();
 
   onMessageListener()
     .then((payload) => {
-      setShow(true);
       console.log(payload);
     })
     .catch((err) => console.log("failed: ", err));
@@ -36,20 +34,28 @@ function App() {
     <Layout>
       <Row
         style={{
-          width: "80vw",
           margin: "auto",
+          width: "80vw",
           textAlign: "center",
-          marginTop: "30px",
         }}
       >
         <img
-          onClick={() => {
-            setShow(true);
-          }}
-          style={{ cursor: "pointer", marginBottom: "10px" }}
+          style={{ cursor: "pointer" }}
           height={"150px"}
           src="/flags/copalogo.svg"
         ></img>
+        <Col>
+          <SignInOut></SignInOut>
+        </Col>
+      </Row>
+      <Row
+        style={{
+          width: "80vw",
+          margin: "auto",
+          textAlign: "center",
+          marginTop: "20px",
+        }}
+      >
         <Card as={Col}>
           <Card.Body>
             <Card.Title>Reglas</Card.Title>
@@ -68,17 +74,6 @@ function App() {
             </Card.Text>
           </Card.Body>
         </Card>
-      </Row>
-      <Row
-        style={{
-          margin: "auto",
-          width: "80vw",
-          textAlign: "center",
-        }}
-      >
-        <Col>
-          <SignInOut></SignInOut>
-        </Col>
       </Row>
     </Layout>
   );

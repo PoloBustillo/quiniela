@@ -25,7 +25,6 @@ export const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);
 export const db = getFirestore(app);
 
-console.log(isSupported());
 const messaging = (async () => {
   try {
     const isSupportedBrowser = await isSupported();

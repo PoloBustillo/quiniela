@@ -1,56 +1,230 @@
 import React from "react";
-import { Col, Row, Table } from "react-bootstrap";
 import { Layout } from "./Layout";
+import CountUp from "react-countup";
+import { useGetAllPronosticosQuery } from "../redux/firebase/api";
+import ThumbDownIcon from "@mui/icons-material/ThumbDown";
+import ThumbUpIcon from "@mui/icons-material/ThumbUp";
+import Container from "@mui/material/Container";
+import Collapse from "@mui/material/Collapse";
+import IconButton from "@mui/material/IconButton";
+import Table from "@mui/material/Table";
+import TableBody from "@mui/material/TableBody";
+import TableCell from "@mui/material/TableCell";
+import TableContainer from "@mui/material/TableContainer";
+import TableHead from "@mui/material/TableHead";
+import TableRow from "@mui/material/TableRow";
+import TableSortLabel from "@mui/material/TableSortLabel";
+import Paper from "@mui/material/Paper";
+import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
+import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
+import Grid from "@mui/material/Grid";
+import { Avatar, Badge } from "@mui/material";
+import { green } from "@mui/material/colors";
+import { useAuth } from "../context/authContext";
+import { SmallAvatar, headCells, getMisPuntos } from "../utils";
+
+function RowData(props) {
+  const { row } = props;
+  const [open, setOpen] = React.useState(false);
+
+  return (
+    <React.Fragment>
+      <TableRow sx={{ "& > *": { borderBottom: "unset" } }}>
+        <TableCell>
+          <IconButton
+            aria-label="expand row"
+            size="small"
+            onClick={() => setOpen(!open)}
+          >
+            {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
+          </IconButton>
+        </TableCell>
+        <TableCell component="th" scope="row">
+          {row.name.split("@")[0]}
+        </TableCell>
+        <TableCell align="center">
+          {row.data.reduce((previousValue, currentValue) => {
+            if (currentValue.data?.points)
+              return previousValue + currentValue.data.points;
+            return previousValue + 0;
+          }, 0)}
+        </TableCell>
+        <TableCell align="center">
+          {row.active ? (
+            <ThumbUpIcon color="success" />
+          ) : (
+            <ThumbDownIcon color="error"></ThumbDownIcon>
+          )}
+        </TableCell>
+      </TableRow>
+      <TableRow>
+        <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
+          <Collapse
+            in={open}
+            timeout="auto"
+            unmountOnExit
+            collapsedSize={"80vh"}
+          >
+            <Grid container style={{ textAlign: "center" }} spacing={2}>
+              {row.data.map((dataItem) => {
+                if (dataItem?.data) {
+                  return (
+                    dataItem.data.partido && (
+                      <Grid
+                        item
+                        key={dataItem.data.partido}
+                        xs={4}
+                        style={{
+                          zIndex: "1000",
+                          backgroundColor: "white",
+                          minHeight: "60px",
+                        }}
+                      >
+                        <Badge
+                          overlap="circular"
+                          anchorOrigin={{
+                            vertical: "top",
+                            horizontal: "left",
+                          }}
+                          badgeContent={
+                            <SmallAvatar sx={{ bgcolor: green[500] }} alt={""}>
+                              {dataItem.data.home_real_goals}
+                            </SmallAvatar>
+                          }
+                        >
+                          <Badge
+                            overlap="circular"
+                            anchorOrigin={{
+                              vertical: "bottom",
+                              horizontal: "left",
+                            }}
+                            badgeContent={
+                              <SmallAvatar sx={{ bgcolor: "gray" }} alt={""}>
+                                {dataItem.data.home_goals}
+                              </SmallAvatar>
+                            }
+                          >
+                            <Avatar
+                              style={{ border: "5px solid red" }}
+                              src={`/flags/${dataItem.data.home_code}.svg`}
+                            />
+                          </Badge>
+                        </Badge>
+                        <Badge
+                          overlap="circular"
+                          anchorOrigin={{
+                            vertical: "top",
+                            horizontal: "right",
+                          }}
+                          badgeContent={
+                            <SmallAvatar sx={{ bgcolor: green[500] }} alt={""}>
+                              {dataItem.data.away_real_goals}
+                            </SmallAvatar>
+                          }
+                        >
+                          <Badge
+                            overlap="circular"
+                            anchorOrigin={{
+                              vertical: "bottom",
+                              horizontal: "right",
+                            }}
+                            badgeContent={
+                              <SmallAvatar sx={{ bgcolor: "gray" }} alt={""}>
+                                {dataItem.data.away_goals}
+                              </SmallAvatar>
+                            }
+                          >
+                            <Avatar
+                              style={{ border: "5px solid red" }}
+                              src={`/flags/${dataItem.data.away_code}.svg`}
+                            />
+                          </Badge>
+                        </Badge>
+                      </Grid>
+                    )
+                  );
+                }
+              })}
+            </Grid>
+          </Collapse>
+        </TableCell>
+      </TableRow>
+    </React.Fragment>
+  );
+}
 
 export const Resultados = () => {
+  const { data: pronosticos } = useGetAllPronosticosQuery(
+    {},
+    { refetchOnFocus: true, refetchOnMountOrArgChange: true }
+  );
+  console.log(pronosticos);
+  const { user } = useAuth();
+
+  const [order, setOrder] = React.useState("asc");
+  const [orderBy, setOrderBy] = React.useState("points");
+
+  const handleRequestSort = (event, property) => {
+    const isAsc = orderBy === property && order === "asc";
+    setOrder(isAsc ? "desc" : "asc");
+    setOrderBy(property);
+  };
+
   return (
     <Layout>
-      <Row
-        className={"center"}
-        style={{ color: "white", paddingTop: "30px", width: "100%" }}
-      >
-        <Col sm={12} className={"mx-3"} style={{ textAlign: "center" }}>
+      <Container fixed>
+        <div
+          style={{
+            color: "white",
+            paddingTop: "30px",
+            width: "100%",
+            textAlign: "center",
+          }}
+        >
           <div>
             <h1>MI PUNTAJE</h1>
           </div>
           <div style={{ fontSize: "15vw" }}>
-            14<span style={{ fontSize: "5vw", color: "whitesmoke" }}>pts</span>
+            <CountUp
+              end={getMisPuntos(pronosticos, user)}
+              duration={2}
+            ></CountUp>
+            <span style={{ fontSize: "5vw", color: "whitesmoke" }}>pts</span>
           </div>
-          <Table striped style={{ color: "white" }}>
-            <thead>
-              <tr>
-                <th>#</th>
-                <th>Partido</th>
-                <th>Pronostico</th>
-                <th>Puntos</th>
-                <th>Pagado</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>1</td>
-                <td>Mark</td>
-                <td>Otto</td>
-                <td>@mdo</td>
-                <td>@mdo</td>
-              </tr>
-              <tr>
-                <td>2</td>
-                <td>Jacob</td>
-                <td>Thornton</td>
-                <td>@fat</td>
-                <td>@mdo</td>
-              </tr>
-              <tr>
-                <td>3</td>
-                <td colSpan={2}>Larry the Bird</td>
-                <td>@twitter</td>
-                <td>@mdo</td>
-              </tr>
-            </tbody>
+        </div>
+        <TableContainer component={Paper}>
+          <Table stickyHeader aria-label="collapsible table" size="small">
+            <TableHead>
+              <TableRow>
+                <TableCell />
+                {headCells.map((headCell) => (
+                  <TableCell
+                    key={headCell.id}
+                    align="center"
+                    padding="none"
+                    sortDirection={orderBy === headCell.id ? order : false}
+                  >
+                    <TableSortLabel
+                      active={orderBy === headCell.id}
+                      direction={orderBy === headCell.id ? order : "asc"}
+                      onClick={(e) => {
+                        handleRequestSort(e, headCell.id);
+                      }}
+                    >
+                      {headCell.label}
+                    </TableSortLabel>
+                  </TableCell>
+                ))}
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {pronosticos?.map((row) => {
+                return <RowData key={row.name} row={row} />;
+              })}
+            </TableBody>
           </Table>
-        </Col>
-      </Row>
+        </TableContainer>
+      </Container>
     </Layout>
   );
 };
