@@ -19,7 +19,7 @@ export const api = createApi({
       },
     }),
     getPartidos: build.query({
-      keepUnusedDataFor: 1000000,
+      keepUnusedDataFor: 1000000000,
       async queryFn(body, _queryApi, _extraOptions, baseQuery) {
         let partidosArray = [];
         let partidosByDay = [];
@@ -73,6 +73,7 @@ export const api = createApi({
       },
     }),
     getAllPronosticos: build.query({
+      keepUnusedDataFor: 1000000,
       async queryFn(body, _queryApi, _extraOptions, baseQuery) {
         let partidos = [];
 
@@ -95,7 +96,7 @@ export const api = createApi({
           }
           //TODO: change date
           let oldGames = partidos.filter((partido) => {
-            return new Date(time) - new Date(partido.datetime) > 0;
+            return new Date("11-22-2022") - new Date(partido.datetime) > 0;
           });
 
           const pronosticos = [];

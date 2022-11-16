@@ -84,7 +84,7 @@ export const Pronosticos = () => {
                 <Toast.Body>Contacte por whatsapp 3317700339</Toast.Body>
               </Toast>
             </ToastContainer>
-            {partidosByDay.map((partidos) => {
+            {partidosByDay?.map((partidos) => {
               if (partidos.length > 0)
                 return (
                   <Col sm={6} key={partidos[0].id}>

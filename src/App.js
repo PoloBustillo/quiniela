@@ -1,11 +1,11 @@
 import "./App.css";
 import { SignInOut } from "./components/SignInOut";
-import { Card, Col, Row } from "react-bootstrap";
+import { Col, Row } from "react-bootstrap";
 import { Layout } from "./pages/Layout";
 import { useEffect, useState } from "react";
 import { useAuth } from "./context/authContext";
 import { useNavigate } from "react-router-dom";
-import { getTokenFirebase, onMessageListener } from "./firebase-config";
+
 import { Paper } from "@mui/material";
 
 function App() {
@@ -50,7 +50,8 @@ function App() {
         >
           <h5>Reglas</h5>
           <p>
-            <b>FASE DE GRUPOS:</b> ($150) Deposito a <b>5204 1674 0947 6496</b>
+            <b>FASE DE GRUPOS:</b> ($150) Deposito a{" "}
+            <b>BANAMEX: 5204 1674 0947 6496</b>
           </p>
           <p>
             <b>PREMIOS:</b> 1er y 2ndo lugar (por cada jugador $100 van al

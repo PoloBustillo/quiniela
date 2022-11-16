@@ -180,13 +180,7 @@ export const Resultados = () => {
   const [order, setOrder] = React.useState("asc");
   const [orderPronosticos, setOrderPronosticos] = React.useState([]);
   const [orderBy, setOrderBy] = React.useState("points");
-  const { data: pronosticos } = useGetAllPronosticosQuery(
-    {},
-    {
-      refetchOnFocus: true,
-      refetchOnMountOrArgChange: true,
-    }
-  );
+  const { data: pronosticos } = useGetAllPronosticosQuery();
 
   const { user } = useAuth();
 
