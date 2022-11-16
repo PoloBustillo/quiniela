@@ -18,7 +18,6 @@ export const pronosticosSlice = createSlice({
       state.active = action.payload.active;
     },
     updatePronosticos: (state, { payload }) => {
-      console.log(payload);
       state.pronosticos[payload.partidoId] = payload;
     },
   },

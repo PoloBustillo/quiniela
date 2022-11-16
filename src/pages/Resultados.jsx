@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Layout } from "./Layout";
 import CountUp from "react-countup";
 import { useGetAllPronosticosQuery } from "../redux/firebase/api";
@@ -19,9 +19,9 @@ import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import Grid from "@mui/material/Grid";
 import { Avatar, Badge } from "@mui/material";
-import { blue, green } from "@mui/material/colors";
+import { blue } from "@mui/material/colors";
 import { useAuth } from "../context/authContext";
-import { SmallAvatar, headCells, getMisPuntos } from "../utils";
+import { SmallAvatar, headCells, getMisPuntos, getComparator } from "../utils";
 
 function RowData(props) {
   const { row } = props;
@@ -76,7 +76,7 @@ function RowData(props) {
                         xs={4}
                         style={{
                           zIndex: "1000",
-                          backgroundColor: "white",
+                          backgroundColor: "#1e1e1e",
                           minHeight: "60px",
                         }}
                       >
@@ -147,7 +147,7 @@ function RowData(props) {
                               </SmallAvatar>
                             }
                           >
-                            {dataItem.data.points}pt
+                            {dataItem.data.points}
                             <Avatar
                               style={{
                                 border: `5px solid ${
@@ -177,15 +177,18 @@ function RowData(props) {
 }
 
 export const Resultados = () => {
+  const [order, setOrder] = React.useState("asc");
+  const [orderPronosticos, setOrderPronosticos] = React.useState([]);
+  const [orderBy, setOrderBy] = React.useState("points");
   const { data: pronosticos } = useGetAllPronosticosQuery(
     {},
-    { refetchOnFocus: true, refetchOnMountOrArgChange: true }
+    {
+      refetchOnFocus: true,
+      refetchOnMountOrArgChange: true,
+    }
   );
-  console.log(pronosticos);
-  const { user } = useAuth();
 
-  const [order, setOrder] = React.useState("asc");
-  const [orderBy, setOrderBy] = React.useState("points");
+  const { user } = useAuth();
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === "asc";
@@ -193,13 +196,45 @@ export const Resultados = () => {
     setOrderBy(property);
   };
 
+  useEffect(() => {
+    if (pronosticos?.length > 0) {
+      let newPronosticos = Object.assign([], pronosticos);
+      if (orderBy === "name") {
+        let orderPronostico = newPronosticos.sort(getComparator(order, "name"));
+        setOrderPronosticos(orderPronostico);
+      }
+      if (orderBy === "points") {
+        let orderPronostico = newPronosticos.sort((a, b) => {
+          let a_puntos = a.data.reduce((previousValue, currentValue) => {
+            if (currentValue.data?.points)
+              return previousValue + currentValue.data.points;
+            return previousValue + 0;
+          }, 0);
+          let b_puntos = b.data.reduce((previousValue, currentValue) => {
+            if (currentValue.data?.points)
+              return previousValue + currentValue.data.points;
+            return previousValue + 0;
+          }, 0);
+          if (order === "desc") {
+            return a_puntos - b_puntos;
+          }
+          if (order === "asc") {
+            return b_puntos - a_puntos;
+          }
+        });
+
+        setOrderPronosticos(orderPronostico);
+      }
+    }
+  }, [orderBy, order, pronosticos]);
+
   return (
     <Layout>
-      <Container fixed>
+      <Container fixed style={{ padding: "0" }}>
         <div
           style={{
             color: "white",
-            paddingTop: "30px",
+            padding: "0",
             width: "100%",
             textAlign: "center",
           }}
@@ -215,7 +250,7 @@ export const Resultados = () => {
             <span style={{ fontSize: "5vw", color: "whitesmoke" }}>pts</span>
           </div>
         </div>
-        <TableContainer component={Paper}>
+        <TableContainer component={Paper} style={{ padding: "0" }}>
           <Table stickyHeader aria-label="collapsible table" size="small">
             <TableHead>
               <TableRow>
@@ -241,7 +276,7 @@ export const Resultados = () => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {pronosticos?.map((row) => {
+              {orderPronosticos?.map((row) => {
                 return <RowData key={row.name} row={row} />;
               })}
             </TableBody>
