@@ -9,6 +9,7 @@ import {
 } from "firebase/auth";
 import { useDispatch } from "react-redux";
 import { initPronosticos } from "../redux/slices/pronosticosReducer";
+import { fetchAllPartidos } from "../redux/slices/partidosReducer";
 
 const providerGoogle = new GoogleAuthProvider();
 const providerFacebook = new FacebookAuthProvider();
@@ -24,17 +25,17 @@ export const useAuth = () => {
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
-  const [loading, isLoading] = useState(true);
+
   const dispatch = useDispatch();
   useEffect(() => {
     let authObserver = onAuthStateChanged(auth, async (user) => {
       setUser(user);
-      isLoading(false);
+
       if (user) {
-        console.log("INIT pronosticos:{Redux}");
         try {
           const pronosticosRef = doc(db, "pronosticos", user.uid);
           const docSnap = await getDoc(pronosticosRef);
+          dispatch(fetchAllPartidos());
           let mis_pronosticos = docSnap.data();
           if (mis_pronosticos?.data) {
             dispatch(initPronosticos(mis_pronosticos));
@@ -56,7 +57,7 @@ export function AuthProvider({ children }) {
   const signGoogle = () => signInWithPopup(auth, providerGoogle);
   const signFacebook = () => signInWithPopup(auth, providerFacebook);
   return (
-    <authContext.Provider value={{ signGoogle, signFacebook, user, loading }}>
+    <authContext.Provider value={{ signGoogle, signFacebook, user }}>
       {children}
     </authContext.Provider>
   );

@@ -233,10 +233,8 @@ export const Resultados = () => {
             textAlign: "center",
           }}
         >
-          <div>
-            <h1>MI PUNTAJE</h1>
-          </div>
           <div style={{ fontSize: "15vw" }}>
+            <h1>MI PUNTAJE</h1>
             <CountUp
               end={getMisPuntos(pronosticos, user)}
               duration={2}

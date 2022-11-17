@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { faClock } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Card, Col, Form, Row } from "react-bootstrap";
+import { Card, Col, Row } from "react-bootstrap";
 import { Equipos } from "./Equipos";
 import { updatePronosticos } from "../redux/slices/pronosticosReducer";
 import { useDispatch, useSelector } from "react-redux";

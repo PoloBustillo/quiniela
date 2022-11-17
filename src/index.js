@@ -12,6 +12,7 @@ import { ProtectedRoute } from "./pages/ProtectedRoute";
 import store from "./redux/store";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
+import { SnackbarProvider } from "notistack";
 
 const darkTheme = createTheme({
   palette: {
@@ -43,17 +44,23 @@ const router = createBrowserRouter([
     ),
     errorElement: <NotFound></NotFound>,
   },
+  {
+    path: "*",
+    element: <NotFound></NotFound>,
+  },
 ]);
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <Provider store={store}>
-      <AuthProvider>
-        <ThemeProvider theme={darkTheme}>
-          <CssBaseline />
-          <RouterProvider router={router} />
-        </ThemeProvider>
-      </AuthProvider>
+      <SnackbarProvider maxSnack={3}>
+        <AuthProvider>
+          <ThemeProvider theme={darkTheme}>
+            <CssBaseline />
+            <RouterProvider router={router} />
+          </ThemeProvider>
+        </AuthProvider>
+      </SnackbarProvider>
     </Provider>
   </React.StrictMode>
 );

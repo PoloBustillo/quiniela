@@ -2,13 +2,11 @@ import React, { useState } from "react";
 import { Row, Col, Form, Alert } from "react-bootstrap";
 import Button from "@mui/material/Button";
 import { useAuth } from "../context/authContext";
-import { useNavigate } from "react-router-dom";
 import { Facebook, Google } from "@mui/icons-material";
 
 export const SignInOut = () => {
   const { signGoogle, signFacebook } = useAuth();
   const [error, setError] = useState("");
-  const navigation = useNavigate();
   return (
     <Form>
       <Row className="my-5 text-center">

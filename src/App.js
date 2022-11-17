@@ -2,7 +2,7 @@ import "./App.css";
 import { SignInOut } from "./components/SignInOut";
 import { Col, Row } from "react-bootstrap";
 import { Layout } from "./pages/Layout";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useAuth } from "./context/authContext";
 import { useNavigate } from "react-router-dom";
 
