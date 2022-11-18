@@ -4,7 +4,7 @@ import { db } from "../../firebase-config";
 import CryptoJS from "crypto-js";
 import { compareAsc } from "date-fns";
 import { setOldGames } from "../slices/partidosReducer";
-import { calculatePoints } from "../../utils";
+import { calculatePoints, getTime, getTouched } from "../../utils";
 
 const key = "11B61F47CF1E7D3B93B8527C6352D";
 
@@ -76,17 +76,36 @@ export const api = createApi({
       },
     }),
     updatePronosticosFirebase: build.mutation({
-      queryFn: async ({ body, userId }, { dispatch }) => {
+      queryFn: async ({ body, userId }, { getState }) => {
         let data = null;
+        let partidos = getState().partidosSlice.partidos;
+        let comparePronosticos = getState().pronosticosSlice.comparePronosticos;
+        let touchedPartidos = getTouched(partidos, comparePronosticos);
+        console.log(touchedPartidos);
         try {
           CryptoJS.pad.NoPadding = {
             pad: function () {},
             unpad: function () {},
           };
+
+          let time = getTime();
+          let finalPronosticos = {};
+          Object.keys(body).forEach((partidoId) => {
+            const result = compareAsc(
+              new Date("2022-11-22T17:00:00Z"),
+              new Date(partidos[partidoId].datetime)
+            );
+            if (result < 0) {
+              console.log(body[partidoId]);
+              finalPronosticos = { ...finalPronosticos, ...body[partidoId] };
+            }
+          });
+          console.log(partidos);
+          console.log(body);
+          console.log(finalPronosticos);
           data = CryptoJS.AES.encrypt(JSON.stringify(body), key).toString();
           const pronosticosRef = doc(db, "pronosticos", userId);
-          //TODO: check data before encrypt
-          dispatch();
+
           updateDoc(pronosticosRef, { data: data });
         } catch (error) {
           console.log(error);

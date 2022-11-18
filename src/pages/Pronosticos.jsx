@@ -27,32 +27,60 @@ const StyledFab = styled(Fab)({
 
 export const Pronosticos = () => {
   const { user } = useAuth();
+
+  var options = {
+    weekday: "long",
+    month: "long",
+    day: "numeric",
+  };
   const [group, setGroup] = useState(false);
   const [porcentajes, setPorcentajes] = useState([]);
   const active = useSelector((state) => state.pronosticosSlice.active);
-  const { partidosByDay, isLoading } = useSelector(
-    (state) => state.partidosSlice
-  );
+  const {
+    partidosByDay,
+    isLoading,
+    partidos,
+    gruposArray: partidosByGroup,
+  } = useSelector((state) => state.partidosSlice);
+
   const { pronosticos } = useSelector((state) => state.pronosticosSlice);
 
   const [updatePronosticos] = useUpdatePronosticosFirebaseMutation();
   const { enqueueSnackbar } = useSnackbar();
   React.useEffect(() => {
-    let porcentajes = partidosByDay?.map((partidos) => {
-      if (partidos.length > 0) {
-        let indices = partidos
-          .map((partido) => {
-            return partido.id;
-          })
-          .filter((id) => {
-            return pronosticos[id];
-          }).length;
-        return (indices / partidos.length) * 100;
-      }
-      return 0;
-    });
+    let porcentajes = [];
+    if (!group) {
+      porcentajes = partidosByDay?.map((partidos) => {
+        if (partidos.length > 0) {
+          let indices = partidos
+            .map((partido) => {
+              return partido.id;
+            })
+            .filter((id) => {
+              return pronosticos[id];
+            }).length;
+          return (indices / partidos.length) * 100;
+        }
+        return 0;
+      });
+    } else {
+      porcentajes = partidosByGroup?.map((group) => {
+        if (group.partidos.length > 0) {
+          let indices = group.partidos
+            .map((partido) => {
+              return partido.id;
+            })
+            .filter((id) => {
+              return pronosticos[id];
+            }).length;
+          return (indices / group.partidos.length) * 100;
+        }
+        return 0;
+      });
+    }
+
     setPorcentajes(porcentajes);
-  }, [pronosticos, partidosByDay]);
+  }, [pronosticos, partidosByDay, group]);
   return (
     <Layout>
       <Container fluid>
@@ -75,25 +103,37 @@ export const Pronosticos = () => {
           </div>
         ) : (
           <Row>
-            {!group ? (
-              partidosByDay?.map((partidos, index) => {
-                if (partidos.length > 0) {
+            {!group
+              ? partidosByDay?.map((partidos, index) => {
+                  if (partidos.length > 0) {
+                    let date = new Date(
+                      partidos[0].datetime
+                    ).toLocaleDateString("es-US", options);
+                    return (
+                      <Col sm={6} key={partidos[0].id}>
+                        <DiaDePartidos
+                          key={partidos[0].id}
+                          partidosDelDia={partidos}
+                          title={date[0].toUpperCase() + date.slice(1)}
+                          maxProgress={porcentajes[index]}
+                        ></DiaDePartidos>
+                      </Col>
+                    );
+                  }
+                  return null;
+                })
+              : partidosByGroup?.map((grupo, index) => {
                   return (
-                    <Col sm={6} key={partidos[0].id}>
+                    <Col sm={6} key={grupo.id}>
                       <DiaDePartidos
-                        key={partidos[0].id}
-                        partidosDelDia={partidos}
-                        dia={partidos[0].datetime}
+                        key={grupo.id}
+                        partidosDelDia={grupo.partidos}
+                        title={`Grupo ${grupo.id}`}
                         maxProgress={porcentajes[index]}
                       ></DiaDePartidos>
                     </Col>
                   );
-                }
-                return null;
-              })
-            ) : (
-              <Row></Row>
-            )}
+                })}
           </Row>
         )}
         <div style={{ height: "100px" }}></div>
@@ -119,6 +159,7 @@ export const Pronosticos = () => {
                     });
                   })
                   .catch((error) => {
+                    console.log(error);
                     enqueueSnackbar(
                       "Error en guardado: contacte por whatsapp 3317700339",
                       {

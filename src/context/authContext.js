@@ -29,6 +29,7 @@ export function AuthProvider({ children }) {
   const dispatch = useDispatch();
   useEffect(() => {
     let authObserver = onAuthStateChanged(auth, async (user) => {
+      console.log("onAuthStateChanged: User is logged", user);
       setUser(user);
 
       if (user) {

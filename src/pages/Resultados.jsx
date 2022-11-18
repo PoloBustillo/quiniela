@@ -24,12 +24,19 @@ import { useAuth } from "../context/authContext";
 import { SmallAvatar, headCells, getMisPuntos, getComparator } from "../utils";
 
 function RowData(props) {
-  const { row } = props;
+  const { row, mine } = props;
   const [open, setOpen] = React.useState(false);
 
   return (
     <React.Fragment>
-      <TableRow sx={{ "& > *": { borderBottom: "unset" } }}>
+      <TableRow
+        sx={{
+          "& > *": {
+            borderBottom: "unset",
+            backgroundColor: mine ? "green" : "inherit",
+          },
+        }}
+      >
         <TableCell>
           <IconButton
             aria-label="expand row"
@@ -65,7 +72,11 @@ function RowData(props) {
             unmountOnExit
             collapsedSize={"80vh"}
           >
-            <Grid container style={{ textAlign: "center" }} spacing={2}>
+            <Grid
+              container
+              style={{ textAlign: "center", marginTop: 0 }}
+              spacing={2}
+            >
               {row.data.map((dataItem) => {
                 if (dataItem?.data) {
                   return (
@@ -269,7 +280,13 @@ export const Resultados = () => {
             </TableHead>
             <TableBody>
               {orderPronosticos?.map((row) => {
-                return <RowData key={row.name} row={row} />;
+                return (
+                  <RowData
+                    mine={user.displayName.includes(row.name)}
+                    key={row.name}
+                    row={row}
+                  />
+                );
               })}
             </TableBody>
           </Table>

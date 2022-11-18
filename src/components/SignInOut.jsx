@@ -5,7 +5,7 @@ import { useAuth } from "../context/authContext";
 import { Facebook, Google } from "@mui/icons-material";
 
 export const SignInOut = () => {
-  const { signGoogle, signFacebook } = useAuth();
+  const { signGoogle, signFacebook, user } = useAuth();
   const [error, setError] = useState("");
   return (
     <Form>
@@ -43,6 +43,7 @@ export const SignInOut = () => {
             onClick={async () => {
               try {
                 signGoogle();
+                console.log(user);
               } catch (error) {
                 setError(error);
               }

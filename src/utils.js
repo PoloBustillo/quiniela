@@ -34,6 +34,27 @@ export const getComparator = (order, orderBy) => {
     ? (a, b) => descendingComparator(a, b, orderBy)
     : (a, b) => -descendingComparator(a, b, orderBy);
 };
+
+export const getTouched = (partidos, comparePronosticos) => {
+  console.log("COMPARE", comparePronosticos);
+  let sortedPartidos = Object.values(partidos).sort((partidoA, partidoB) => {
+    return partidoA.id - partidoB.id;
+  });
+
+  console.log("SORT", sortedPartidos);
+};
+
+export const getTime = async () => {
+  try {
+    let response = await fetch(
+      "https://worldtimeapi.org/api/timezone/America/Mexico_City"
+    );
+    let time = await response.json();
+    return time.utc_datetime;
+  } catch (error) {
+    return new Date().toUTCString();
+  }
+};
 export const calculatePoints = (oldGames, decrypted) => {
   let predictions = oldGames.map((partido) => {
     let points = 0;

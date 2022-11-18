@@ -5,12 +5,11 @@ import {
   linearProgressClasses,
   Typography,
 } from "@mui/material";
-import id from "date-fns/esm/locale/id/index.js";
 import React from "react";
 import { Accordion, Row } from "react-bootstrap";
 import { Partido } from "./Partido";
 
-export const DiaDePartidos = ({ partidosDelDia, dia, maxProgress = 100 }) => {
+export const DiaDePartidos = ({ partidosDelDia, title, maxProgress = 100 }) => {
   const [progress, setProgress] = React.useState(0);
 
   var options = {
@@ -18,7 +17,7 @@ export const DiaDePartidos = ({ partidosDelDia, dia, maxProgress = 100 }) => {
     month: "long",
     day: "numeric",
   };
-  let date = new Date(dia).toLocaleDateString("es-US", options);
+
   let today = new Date().toLocaleDateString("es-US", options);
   let arrayForSort = [...partidosDelDia];
 
@@ -56,15 +55,13 @@ export const DiaDePartidos = ({ partidosDelDia, dia, maxProgress = 100 }) => {
     >
       <Accordion.Item
         className="my-2"
-        eventKey={date}
+        eventKey={title}
         style={{ backgroundColor: "transparent" }}
       >
         <Accordion.Header
           style={{ backgroundColor: "transparent", paddingRight: 0 }}
         >
-          <span style={{ color: "white", textAlign: "center" }}>
-            {`${date[0].toUpperCase()}${date.slice(1)} `}
-          </span>
+          <span style={{ color: "white", textAlign: "center" }}>{title}</span>
           <Box sx={{ width: "100%" }}>
             <Box sx={{ display: "flex", alignItems: "center" }}>
               <Box sx={{ width: "100%", mr: 1 }}>

@@ -1,11 +1,14 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { compareAsc } from "date-fns";
 import { collection, getDocs } from "firebase/firestore";
 import { db } from "../../firebase-config";
+import { getTime } from "../../utils";
 
 const initialState = {
   partidos: [],
   partidosByDay: [],
   oldGames: [],
+  gruposArray: [],
   isLoading: false,
 };
 
@@ -13,10 +16,28 @@ export const fetchAllPartidos = createAsyncThunk(
   "partidosSlice/getPartidos",
   async (thunkAPI) => {
     let partidosArray = [];
+    let gruposArray = [];
     const partidosRef = collection(db, "partidos");
+    const gruposRef = collection(db, "grupos");
     const docsRef = await getDocs(partidosRef);
     docsRef.forEach((doc) => {
       partidosArray.push(doc.data());
+    });
+
+    const groupsRef = await getDocs(gruposRef);
+
+    groupsRef.forEach((doc) => {
+      let partidosGrupos = new Set();
+      doc.data().teams.map((data) => {
+        let filteredData = partidosArray.filter((partido) => {
+          return partido.home_team_country === data.country;
+        });
+        filteredData.forEach((partido) => {
+          partidosGrupos.add(partido);
+        });
+      });
+
+      gruposArray.push({ id: doc.id, partidos: Array.from(partidosGrupos) });
     });
 
     let partidosByDay = partidosArray.reduce((partidos, item) => {
@@ -37,26 +58,19 @@ export const fetchAllPartidos = createAsyncThunk(
     let sortArrayByDay = arrayByDay.sort((a, b) => {
       return new Date(a[0].datetime) - new Date(b[0].datetime);
     });
-    let time = "";
-    try {
-      let response = await fetch(
-        "https://worldtimeapi.org/api/timezone/America/Mexico_City"
-      );
-      time = await response.json();
-      time = time.utc_datetime;
-    } catch (error) {
-      time = new Date().toUTCString();
-    }
+    let time = await getTime();
 
     let filterSortArrayByDay = sortArrayByDay.map((partidosByDay) => {
       return partidosByDay.filter((partido) => {
-        return new Date(time) - new Date(partido.datetime) < 0;
+        const result = compareAsc(new Date(time), new Date(partido.datetime));
+        return result < 0;
       });
     });
 
     return {
       partidosArray: partidosArray,
       filterSortArrayByDay: filterSortArrayByDay,
+      gruposArray: gruposArray,
     };
   }
 );
@@ -73,6 +87,7 @@ export const partidosSlice = createSlice({
     builder.addCase(fetchAllPartidos.fulfilled, (state, action) => {
       state.partidos = action.payload.partidosArray;
       state.partidosByDay = action.payload.filterSortArrayByDay;
+      state.gruposArray = action.payload.gruposArray;
       state.isLoading = false;
     });
     builder.addCase(fetchAllPartidos.pending, (state, action) => {

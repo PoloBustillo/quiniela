@@ -23,7 +23,7 @@ function App() {
       <Row
         style={{
           marginTop: "10vh",
-          width: "100vw",
+
           textAlign: "center",
         }}
       >
@@ -34,16 +34,14 @@ function App() {
       </Row>
       <Row
         style={{
-          width: "100vw",
           textAlign: "center",
-          bottom: 20,
-          position: "absolute",
+          position: "relative",
+          bottom: 0,
         }}
       >
         <Paper
           elevation={24}
           style={{
-            width: "100vw",
             backgroundColor: "rgba(10,10,10,.3)",
             color: "white",
           }}
