@@ -47,7 +47,7 @@ export const getTouched = (pronosticos) => {
 };
 
 export const getTime = async () => {
-  //return "11-23-2022";
+  return "12-23-2022";
   try {
     let response = await fetch(
       "https://worldtimeapi.org/api/timezone/America/Mexico_City"

@@ -113,7 +113,9 @@ function RowData(props) {
                             }}
                             badgeContent={
                               <SmallAvatar sx={{ bgcolor: "gray" }} alt={""}>
-                                {dataItem.data.home_goals}
+                                {dataItem.data?.home_goals === null
+                                  ? "0"
+                                  : dataItem.data.home_goals}
                               </SmallAvatar>
                             }
                           >
@@ -123,7 +125,8 @@ function RowData(props) {
                                   dataItem.data.winner_real ===
                                   dataItem.data.home_code
                                     ? "green"
-                                    : dataItem.data.winner_real === null
+                                    : dataItem.data.winner_real === null ||
+                                      dataItem.data.winner_real === ""
                                     ? "gray"
                                     : "red"
                                 }`,
@@ -154,7 +157,9 @@ function RowData(props) {
                             }}
                             badgeContent={
                               <SmallAvatar sx={{ bgcolor: "gray" }} alt={""}>
-                                {dataItem.data.away_goals}
+                                {dataItem.data.away_goals === null
+                                  ? "0"
+                                  : dataItem.data.away_goals}
                               </SmallAvatar>
                             }
                           >
@@ -165,7 +170,8 @@ function RowData(props) {
                                   dataItem.data.winner_real ===
                                   dataItem.data.away_code
                                     ? "green"
-                                    : dataItem.data.winner_real === null
+                                    : dataItem.data.winner_real === null ||
+                                      dataItem.data.winner_real === ""
                                     ? "gray"
                                     : "red"
                                 }`,
