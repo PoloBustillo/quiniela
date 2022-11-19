@@ -9,7 +9,12 @@ import React from "react";
 import { Accordion, Row } from "react-bootstrap";
 import { Partido } from "./Partido";
 
-export const DiaDePartidos = ({ partidosDelDia, title, maxProgress = 100 }) => {
+export const DiaDePartidos = ({
+  partidosDelDia,
+  title,
+  maxProgress = 100,
+  group,
+}) => {
   const [progress, setProgress] = React.useState(0);
 
   var options = {
@@ -83,7 +88,13 @@ export const DiaDePartidos = ({ partidosDelDia, title, maxProgress = 100 }) => {
                 return new Date(a.datetime) - new Date(b.datetime);
               })
               .map((partido) => {
-                return <Partido key={partido.id} partido={partido}></Partido>;
+                return (
+                  <Partido
+                    key={partido.id}
+                    partido={partido}
+                    group={group}
+                  ></Partido>
+                );
               })}
           </Row>
         </Accordion.Body>

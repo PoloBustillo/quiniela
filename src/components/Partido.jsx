@@ -7,7 +7,7 @@ import { updatePronosticos } from "../redux/slices/pronosticosReducer";
 import { useDispatch, useSelector } from "react-redux";
 import { TextField } from "@mui/material";
 
-export const Partido = ({ partido }) => {
+export const Partido = ({ partido, group }) => {
   const dispatch = useDispatch();
   const pronostico = useSelector((state) =>
     state.pronosticosSlice.pronosticos.find((pronostico) => {
@@ -134,10 +134,17 @@ export const Partido = ({ partido }) => {
                 swapOpacity
                 mask="fa-regular fa-circle"
               />
-              {new Date(partido.datetime).toLocaleTimeString("en-US", {
-                hour: "2-digit",
-                minute: "2-digit",
-              })}
+              {!group
+                ? new Date(partido.datetime).toLocaleTimeString("en-US", {
+                    hour: "2-digit",
+                    minute: "2-digit",
+                  })
+                : new Date(partido.datetime).toLocaleTimeString("en-US", {
+                    hour: "2-digit",
+                    month: "short",
+                    day: "2-digit",
+                    minute: "2-digit",
+                  })}
             </Col>
           </Row>
           <Row

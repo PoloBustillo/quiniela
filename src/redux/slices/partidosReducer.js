@@ -23,20 +23,20 @@ export const fetchAllPartidos = createAsyncThunk(
     docsRef.forEach((doc) => {
       partidosArray.push(doc.data());
     });
-
+    let time = await getTime();
     const groupsRef = await getDocs(gruposRef);
 
     groupsRef.forEach((doc) => {
       let partidosGrupos = new Set();
       doc.data().teams.forEach((data) => {
         let filteredData = partidosArray.filter((partido) => {
-          return partido.home_team_country === data.country;
+          const result = compareAsc(new Date(time), new Date(partido.datetime));
+          return partido.home_team_country === data.country && result < 0;
         });
         filteredData.forEach((partido) => {
           partidosGrupos.add(partido);
         });
       });
-
       gruposArray.push({ id: doc.id, partidos: Array.from(partidosGrupos) });
     });
 
@@ -58,7 +58,6 @@ export const fetchAllPartidos = createAsyncThunk(
     let sortArrayByDay = arrayByDay.sort((a, b) => {
       return new Date(a[0].datetime) - new Date(b[0].datetime);
     });
-    let time = await getTime();
 
     let filterSortArrayByDay = sortArrayByDay.map((partidosByDay) => {
       return partidosByDay.filter((partido) => {

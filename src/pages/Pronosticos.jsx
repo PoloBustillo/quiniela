@@ -125,6 +125,7 @@ export const Pronosticos = () => {
                   return (
                     <Col sm={6} key={grupo.id}>
                       <DiaDePartidos
+                        group={group}
                         key={grupo.id}
                         partidosDelDia={grupo.partidos}
                         title={`Grupo ${grupo.id}`}

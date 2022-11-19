@@ -26,12 +26,14 @@ export const api = createApi({
       async queryFn(body, { getState, dispatch }, _extraOptions, baseQuery) {
         const partidos = getState().partidosSlice.partidos;
 
-        let time = getTime();
+        let time = await getTime();
         let oldGames = partidos.filter((partido) => {
           const result = compareAsc(new Date(time), new Date(partido.datetime));
           return result > 0;
         });
+
         dispatch(setOldGames(oldGames));
+
         if (oldGames) {
           const pronosticos = [];
           try {
@@ -70,7 +72,7 @@ export const api = createApi({
         let pronosticos = getState().pronosticosSlice.pronosticos;
 
         let touchedPronosticos = getTouched(pronosticos);
-        let time = getTime();
+        let time = await getTime();
 
         let badData = touchedPronosticos?.filter((index) => {
           let foundPronostico = pronosticos.find((pronostico) => {
@@ -97,7 +99,6 @@ export const api = createApi({
             JSON.stringify(untouchedPronosticos),
             key
           ).toString();
-          console.log(data);
 
           updateDoc(pronosticosRef, { data: data });
         } catch (error) {

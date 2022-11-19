@@ -8,15 +8,17 @@ export const SmallAvatar = styled(Avatar)(({ theme }) => ({
 }));
 
 export const getMisPuntos = (pronosticos, user) => {
-  return pronosticos
-    ?.find((pronostico) => {
-      return pronostico.name.includes(user.displayName);
-    })
-    .data.reduce((previousValue, currentValue) => {
-      if (currentValue.data?.points)
-        return previousValue + currentValue.data.points;
-      return previousValue + 0;
-    }, 0);
+  return (
+    pronosticos
+      ?.find((pronostico) => {
+        return pronostico.name.includes(user?.displayName);
+      })
+      ?.data.reduce((previousValue, currentValue) => {
+        if (currentValue.data?.points)
+          return previousValue + currentValue.data.points;
+        return previousValue + 0;
+      }, 0) || []
+  );
 };
 
 function descendingComparator(a, b, orderBy) {
@@ -45,6 +47,7 @@ export const getTouched = (pronosticos) => {
 };
 
 export const getTime = async () => {
+  //return "11-23-2022";
   try {
     let response = await fetch(
       "https://worldtimeapi.org/api/timezone/America/Mexico_City"

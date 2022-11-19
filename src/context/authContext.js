@@ -37,7 +37,7 @@ export function AuthProvider({ children }) {
       setUser(user);
 
       if (user) {
-        console.log("onAuthStateChanged: User is logged");
+        console.log("onAuthStateChanged: User is logged", user);
         try {
           dispatch(fetchAllPartidos());
           dispatch(fetchPronosticos(user));
