@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { faClock } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Card, Col, Row } from "react-bootstrap";
@@ -22,6 +22,12 @@ export const Partido = ({ partido }) => {
       ? Number.parseInt(pronosticos[partido.id].away_score)
       : 0
   );
+  useEffect(() => {
+    if (pronosticos[partido.id]?.home_score)
+      setScoreHome(pronosticos[partido.id].home_score);
+    if (pronosticos[partido.id]?.away_score)
+      setScoreAway(pronosticos[partido.id].away_score);
+  }, [pronosticos]);
 
   return (
     <Col sm={12} style={{ color: "whitesmoke", borderColor: "blueviolet" }}>
@@ -62,6 +68,8 @@ export const Partido = ({ partido }) => {
                             partidoId: partido.id,
                             home_score: Number.parseInt(e.target.value),
                             away_score: Number.parseInt(scoreAway),
+                            touched: true,
+                            partido: partido,
                           })
                         );
                       }
@@ -121,6 +129,8 @@ export const Partido = ({ partido }) => {
                             partidoId: partido.id,
                             away_score: Number.parseInt(e.target.value),
                             home_score: Number.parseInt(scoreHome),
+                            touched: true,
+                            partido: partido,
                           })
                         );
                       }
