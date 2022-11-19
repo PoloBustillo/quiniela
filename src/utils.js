@@ -35,13 +35,13 @@ export const getComparator = (order, orderBy) => {
     : (a, b) => -descendingComparator(a, b, orderBy);
 };
 
-export const getTouched = (partidos, comparePronosticos) => {
-  console.log("COMPARE", comparePronosticos);
-  let sortedPartidos = Object.values(partidos).sort((partidoA, partidoB) => {
-    return partidoA.id - partidoB.id;
-  });
-
-  console.log("SORT", sortedPartidos);
+export const getTouched = (pronosticos) => {
+  let touchedPronosticos = Object.values(pronosticos)
+    .filter((pronostico) => {
+      return pronostico.touched;
+    })
+    .map((touchedPronosticos) => touchedPronosticos.partidoId);
+  return touchedPronosticos;
 };
 
 export const getTime = async () => {

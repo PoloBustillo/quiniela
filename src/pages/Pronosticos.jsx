@@ -39,7 +39,6 @@ export const Pronosticos = () => {
   const {
     partidosByDay,
     isLoading,
-    partidos,
     gruposArray: partidosByGroup,
   } = useSelector((state) => state.partidosSlice);
 
@@ -47,6 +46,7 @@ export const Pronosticos = () => {
 
   const [updatePronosticos] = useUpdatePronosticosFirebaseMutation();
   const { enqueueSnackbar } = useSnackbar();
+
   React.useEffect(() => {
     let porcentajes = [];
     if (!group) {
@@ -160,17 +160,43 @@ export const Pronosticos = () => {
                   })
                   .catch((error) => {
                     console.log(error);
-                    enqueueSnackbar(
-                      "Error en guardado: contacte por whatsapp 3317700339",
-                      {
+                    if (error?.length > 0) {
+                      let stringError = "";
+                      error.forEach((index) => {
+                        let pronosticoFound = Object.values(pronosticos).find(
+                          (pronostico) => {
+                            return pronostico.partidoId === index;
+                          }
+                        );
+                        stringError =
+                          stringError +
+                          "[" +
+                          pronosticoFound.partido.home_team_country +
+                          " vs " +
+                          pronosticoFound.partido.away_team_country +
+                          "] ";
+                      });
+                      enqueueSnackbar(`Partidos ${stringError} ya pasaron`, {
                         variant: "error",
                         autoHideDuration: "1000",
                         anchorOrigin: {
                           vertical: "top",
                           horizontal: "center",
                         },
-                      }
-                    );
+                      });
+                    } else {
+                      enqueueSnackbar(
+                        "Error en guardado: contacte por whatsapp 3317700339",
+                        {
+                          variant: "error",
+                          autoHideDuration: "1000",
+                          anchorOrigin: {
+                            vertical: "top",
+                            horizontal: "center",
+                          },
+                        }
+                      );
+                    }
                   });
               }}
               color="secondary"

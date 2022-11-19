@@ -3,7 +3,6 @@ import CryptoJS from "crypto-js";
 const key = "11B61F47CF1E7D3B93B8527C6352D";
 const initialState = {
   pronosticos: {},
-  comparePronosticos: {},
   active: false,
 };
 
@@ -16,7 +15,6 @@ export const pronosticosSlice = createSlice({
         CryptoJS.enc.Utf8
       );
       if (decrypted) {
-        state.comparePronosticos = JSON.parse(decrypted);
         state.pronosticos = JSON.parse(decrypted);
         state.active = action.payload.active;
       }
@@ -24,9 +22,13 @@ export const pronosticosSlice = createSlice({
     updatePronosticos: (state, { payload }) => {
       state.pronosticos[payload.partidoId] = payload;
     },
+    updateAllPronosticos: (state, { payload }) => {
+      state.pronosticos = payload;
+    },
   },
 });
 
-export const { updatePronosticos, initPronosticos } = pronosticosSlice.actions;
+export const { updatePronosticos, initPronosticos, updateAllPronosticos } =
+  pronosticosSlice.actions;
 
 export default pronosticosSlice.reducer;

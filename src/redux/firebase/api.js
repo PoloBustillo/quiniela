@@ -5,6 +5,7 @@ import CryptoJS from "crypto-js";
 import { compareAsc } from "date-fns";
 import { setOldGames } from "../slices/partidosReducer";
 import { calculatePoints, getTime, getTouched } from "../../utils";
+import { updateAllPronosticos } from "../slices/pronosticosReducer";
 
 const key = "11B61F47CF1E7D3B93B8527C6352D";
 
@@ -76,39 +77,39 @@ export const api = createApi({
       },
     }),
     updatePronosticosFirebase: build.mutation({
-      queryFn: async ({ body, userId }, { getState }) => {
+      queryFn: async ({ body, userId }, { dispatch }) => {
         let data = null;
-        let partidos = getState().partidosSlice.partidos;
-        let comparePronosticos = getState().pronosticosSlice.comparePronosticos;
-        let touchedPartidos = getTouched(partidos, comparePronosticos);
-        console.log(touchedPartidos);
+
+        let touchedPronosticos = getTouched(body);
+        let time = getTime();
+        let badData = touchedPronosticos?.filter((index) => {
+          let foundPronostico = Object.values(body).find((pronostico) => {
+            return pronostico.partidoId === index;
+          });
+          const result = compareAsc(
+            new Date("2022-11-22T17:00:00Z"),
+            new Date(foundPronostico.partido.datetime)
+          );
+          return result > 0;
+        });
+        console.log(badData);
+        if (badData.length > 0) return { error: badData };
+
         try {
           CryptoJS.pad.NoPadding = {
             pad: function () {},
             unpad: function () {},
           };
 
-          let time = getTime();
-          let finalPronosticos = {};
-          Object.keys(body).forEach((partidoId) => {
-            const result = compareAsc(
-              new Date("2022-11-22T17:00:00Z"),
-              new Date(partidos[partidoId].datetime)
-            );
-            if (result < 0) {
-              console.log(body[partidoId]);
-              finalPronosticos = { ...finalPronosticos, ...body[partidoId] };
-            }
-          });
-          console.log(partidos);
-          console.log(body);
-          console.log(finalPronosticos);
+          let pronosticos = {
+            ...body,
+            ["1"]: { ...body["1"], away_score: 14 },
+          };
           data = CryptoJS.AES.encrypt(JSON.stringify(body), key).toString();
           const pronosticosRef = doc(db, "pronosticos", userId);
 
-          updateDoc(pronosticosRef, { data: data });
+          //updateDoc(pronosticosRef, { data: data });
         } catch (error) {
-          console.log(error);
           return { error: error };
         }
 
