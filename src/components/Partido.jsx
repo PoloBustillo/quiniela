@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { faClock } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Card, Col, Row } from "react-bootstrap";
@@ -9,25 +9,11 @@ import { TextField } from "@mui/material";
 
 export const Partido = ({ partido }) => {
   const dispatch = useDispatch();
-  const pronosticos = useSelector(
-    (state) => state.pronosticosSlice.pronosticos
+  const pronostico = useSelector((state) =>
+    state.pronosticosSlice.pronosticos.find((pronostico) => {
+      return pronostico?.partidoId === partido.id;
+    })
   );
-  const [scoreHome, setScoreHome] = useState(
-    pronosticos[partido.id]
-      ? Number.parseInt(pronosticos[partido.id].home_score)
-      : 0
-  );
-  const [scoreAway, setScoreAway] = useState(
-    pronosticos[partido.id]
-      ? Number.parseInt(pronosticos[partido.id].away_score)
-      : 0
-  );
-  useEffect(() => {
-    if (pronosticos[partido.id]?.home_score)
-      setScoreHome(pronosticos[partido.id].home_score);
-    if (pronosticos[partido.id]?.away_score)
-      setScoreAway(pronosticos[partido.id].away_score);
-  }, [pronosticos]);
 
   return (
     <Col sm={12} style={{ color: "whitesmoke", borderColor: "blueviolet" }}>
@@ -54,25 +40,24 @@ export const Partido = ({ partido }) => {
                     InputLabelProps={{
                       shrink: true,
                     }}
-                    value={scoreHome}
+                    value={
+                      pronostico?.home_score
+                        ? Number.parseInt(
+                            pronostico?.home_score
+                          ).toLocaleString()
+                        : 0
+                    }
+                    onWheel={(e) => e.target.blur()}
                     onChange={(e) => {
-                      if (e.target.value === "") {
-                        setScoreHome(0);
-                      }
-                      if (Number.parseInt(e.target.value) >= 0) {
-                        setScoreHome(
-                          Number.parseInt(e.target.value).toFixed(0)
-                        );
-                        dispatch(
-                          updatePronosticos({
-                            partidoId: partido.id,
-                            home_score: Number.parseInt(e.target.value),
-                            away_score: Number.parseInt(scoreAway),
-                            touched: true,
-                            partido: partido,
-                          })
-                        );
-                      }
+                      dispatch(
+                        updatePronosticos({
+                          partidoId: partido.id,
+                          home_score: Number.parseInt(e.target.value),
+                          away_score: Number.parseInt(pronostico?.away_score),
+                          touched: true,
+                          date: partido.datetime,
+                        })
+                      );
                     }}
                     variant="filled"
                   />
@@ -115,25 +100,24 @@ export const Partido = ({ partido }) => {
                         width: "100%",
                       },
                     }}
-                    value={scoreAway}
+                    value={
+                      pronostico?.away_score
+                        ? Number.parseInt(
+                            pronostico?.away_score
+                          ).toLocaleString()
+                        : 0
+                    }
+                    onWheel={(e) => e.target.blur()}
                     onChange={(e) => {
-                      if (e.target.value === "") {
-                        setScoreAway(0);
-                      }
-                      if (Number.parseInt(e.target.value) >= 0) {
-                        setScoreAway(
-                          Number.parseInt(e.target.value).toFixed(0)
-                        );
-                        dispatch(
-                          updatePronosticos({
-                            partidoId: partido.id,
-                            away_score: Number.parseInt(e.target.value),
-                            home_score: Number.parseInt(scoreHome),
-                            touched: true,
-                            partido: partido,
-                          })
-                        );
-                      }
+                      dispatch(
+                        updatePronosticos({
+                          partidoId: partido.id,
+                          away_score: Number.parseInt(e.target.value),
+                          home_score: Number.parseInt(pronostico?.home_score),
+                          touched: true,
+                          date: partido.datetime,
+                        })
+                      );
                     }}
                     variant="filled"
                   />

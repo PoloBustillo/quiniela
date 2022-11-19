@@ -36,7 +36,7 @@ export const getComparator = (order, orderBy) => {
 };
 
 export const getTouched = (pronosticos) => {
-  let touchedPronosticos = Object.values(pronosticos)
+  let touchedPronosticos = pronosticos
     .filter((pronostico) => {
       return pronostico.touched;
     })

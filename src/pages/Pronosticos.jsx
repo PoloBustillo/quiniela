@@ -52,13 +52,13 @@ export const Pronosticos = () => {
     if (!group) {
       porcentajes = partidosByDay?.map((partidos) => {
         if (partidos.length > 0) {
-          let indices = partidos
-            .map((partido) => {
-              return partido.id;
-            })
-            .filter((id) => {
-              return pronosticos[id];
-            }).length;
+          let indices = partidos.filter((partido) => {
+            let found = pronosticos?.find(
+              (pronostico) => partido.id === pronostico.partidoId
+            );
+            return found;
+          }).length;
+
           return (indices / partidos.length) * 100;
         }
         return 0;
@@ -66,13 +66,12 @@ export const Pronosticos = () => {
     } else {
       porcentajes = partidosByGroup?.map((group) => {
         if (group.partidos.length > 0) {
-          let indices = group.partidos
-            .map((partido) => {
-              return partido.id;
-            })
-            .filter((id) => {
-              return pronosticos[id];
-            }).length;
+          let indices = group.partidos.filter((partido) => {
+            let found = pronosticos?.find(
+              (pronostico) => partido.id === pronostico.partidoId
+            );
+            return found;
+          }).length;
           return (indices / group.partidos.length) * 100;
         }
         return 0;
@@ -144,11 +143,9 @@ export const Pronosticos = () => {
         >
           <Toolbar style={{ minHeight: "40px" }}>
             <StyledFab
-              onClick={async () => {
+              onClick={() => {
                 updatePronosticos({
-                  body: pronosticos,
                   userId: user.uid,
-                  active: active,
                 })
                   .unwrap()
                   .then((data) => {
@@ -159,15 +156,12 @@ export const Pronosticos = () => {
                     });
                   })
                   .catch((error) => {
-                    console.log(error);
                     if (error?.length > 0) {
                       let stringError = "";
                       error.forEach((index) => {
-                        let pronosticoFound = Object.values(pronosticos).find(
-                          (pronostico) => {
-                            return pronostico.partidoId === index;
-                          }
-                        );
+                        let pronosticoFound = pronosticos.find((pronostico) => {
+                          return pronostico.partidoId === index;
+                        });
                         stringError =
                           stringError +
                           "[" +
@@ -176,14 +170,17 @@ export const Pronosticos = () => {
                           pronosticoFound.partido.away_team_country +
                           "] ";
                       });
-                      enqueueSnackbar(`Partidos ${stringError} ya pasaron`, {
-                        variant: "error",
-                        autoHideDuration: "1000",
-                        anchorOrigin: {
-                          vertical: "top",
-                          horizontal: "center",
-                        },
-                      });
+                      enqueueSnackbar(
+                        `Partidos ${stringError} ya pasaron, recargue para continuar.`,
+                        {
+                          variant: "error",
+                          autoHideDuration: "1000",
+                          anchorOrigin: {
+                            vertical: "top",
+                            horizontal: "center",
+                          },
+                        }
+                      );
                     } else {
                       enqueueSnackbar(
                         "Error en guardado: contacte por whatsapp 3317700339",

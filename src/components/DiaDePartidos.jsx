@@ -41,7 +41,7 @@ export const DiaDePartidos = ({ partidosDelDia, title, maxProgress = 100 }) => {
       } else if (progress > maxProgress) {
         setProgress(maxProgress);
       }
-    }, 100);
+    }, 1);
     return () => {
       clearInterval(timer);
     };

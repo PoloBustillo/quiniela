@@ -28,7 +28,7 @@ export const fetchAllPartidos = createAsyncThunk(
 
     groupsRef.forEach((doc) => {
       let partidosGrupos = new Set();
-      doc.data().teams.map((data) => {
+      doc.data().teams.forEach((data) => {
         let filteredData = partidosArray.filter((partido) => {
           return partido.home_team_country === data.country;
         });

@@ -5,7 +5,6 @@ import CryptoJS from "crypto-js";
 import { compareAsc } from "date-fns";
 import { setOldGames } from "../slices/partidosReducer";
 import { calculatePoints, getTime, getTouched } from "../../utils";
-import { updateAllPronosticos } from "../slices/pronosticosReducer";
 
 const key = "11B61F47CF1E7D3B93B8527C6352D";
 
@@ -27,21 +26,9 @@ export const api = createApi({
       async queryFn(body, { getState, dispatch }, _extraOptions, baseQuery) {
         const partidos = getState().partidosSlice.partidos;
 
-        let time = "";
-        try {
-          let response = await fetch(
-            "https://worldtimeapi.org/api/timezone/America/Mexico_City"
-          );
-          time = await response.json();
-          time = time.utc_datetime;
-        } catch (error) {
-          time = new Date().toUTCString();
-        }
+        let time = getTime();
         let oldGames = partidos.filter((partido) => {
-          const result = compareAsc(
-            new Date("2022-11-22T17:00:00Z"),
-            new Date(partido.datetime)
-          );
+          const result = compareAsc(new Date(time), new Date(partido.datetime));
           return result > 0;
         });
         dispatch(setOldGames(oldGames));
@@ -77,23 +64,28 @@ export const api = createApi({
       },
     }),
     updatePronosticosFirebase: build.mutation({
-      queryFn: async ({ body, userId }, { dispatch }) => {
+      queryFn: async ({ userId }, { getState }) => {
+        const pronosticosRef = doc(db, "pronosticos", userId);
         let data = null;
+        let pronosticos = getState().pronosticosSlice.pronosticos;
 
-        let touchedPronosticos = getTouched(body);
+        let touchedPronosticos = getTouched(pronosticos);
         let time = getTime();
+
         let badData = touchedPronosticos?.filter((index) => {
-          let foundPronostico = Object.values(body).find((pronostico) => {
+          let foundPronostico = pronosticos.find((pronostico) => {
             return pronostico.partidoId === index;
           });
           const result = compareAsc(
-            new Date("2022-11-22T17:00:00Z"),
-            new Date(foundPronostico.partido.datetime)
+            new Date(time),
+            new Date(foundPronostico.datetime)
           );
           return result > 0;
         });
-        console.log(badData);
         if (badData.length > 0) return { error: badData };
+        let untouchedPronosticos = pronosticos.map(({ touched, ...rest }) => {
+          return { touched: false, ...rest };
+        });
 
         try {
           CryptoJS.pad.NoPadding = {
@@ -101,15 +93,15 @@ export const api = createApi({
             unpad: function () {},
           };
 
-          let pronosticos = {
-            ...body,
-            ["1"]: { ...body["1"], away_score: 14 },
-          };
-          data = CryptoJS.AES.encrypt(JSON.stringify(body), key).toString();
-          const pronosticosRef = doc(db, "pronosticos", userId);
+          data = CryptoJS.AES.encrypt(
+            JSON.stringify(untouchedPronosticos),
+            key
+          ).toString();
+          console.log(data);
 
-          //updateDoc(pronosticosRef, { data: data });
+          updateDoc(pronosticosRef, { data: data });
         } catch (error) {
+          console.log(error);
           return { error: error };
         }
 

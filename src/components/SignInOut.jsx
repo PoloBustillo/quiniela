@@ -3,9 +3,11 @@ import { Row, Col, Form, Alert } from "react-bootstrap";
 import Button from "@mui/material/Button";
 import { useAuth } from "../context/authContext";
 import { Facebook, Google } from "@mui/icons-material";
+import { useSnackbar } from "notistack";
 
 export const SignInOut = () => {
   const { signGoogle, signFacebook, user } = useAuth();
+  const { enqueueSnackbar } = useSnackbar();
   const [error, setError] = useState("");
   return (
     <Form>
@@ -23,7 +25,14 @@ export const SignInOut = () => {
               try {
                 signFacebook();
               } catch (error) {
-                setError(error);
+                enqueueSnackbar(`Error en inicio ${error}`, {
+                  variant: "error",
+                  autoHideDuration: "1000",
+                  anchorOrigin: {
+                    vertical: "top",
+                    horizontal: "center",
+                  },
+                });
               }
             }}
             startIcon={<Facebook />}
@@ -43,9 +52,15 @@ export const SignInOut = () => {
             onClick={async () => {
               try {
                 signGoogle();
-                console.log(user);
               } catch (error) {
-                setError(error);
+                enqueueSnackbar(`Error en inicio ${error}`, {
+                  variant: "error",
+                  autoHideDuration: "1000",
+                  anchorOrigin: {
+                    vertical: "top",
+                    horizontal: "center",
+                  },
+                });
               }
             }}
             startIcon={<Google />}

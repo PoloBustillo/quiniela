@@ -8,6 +8,7 @@ import { Avatar, ToggleButton, ToggleButtonGroup } from "@mui/material";
 import { useDispatch } from "react-redux";
 import {
   initPronosticos,
+  updateAllPronosticos,
   updatePronosticos,
 } from "../redux/slices/pronosticosReducer";
 
@@ -64,9 +65,6 @@ export const Layout = ({ children }) => {
               className="d-flex"
               onClick={() => {
                 signOut(auth);
-                navigation("/");
-                dispatch(initPronosticos([]));
-                dispatch(updatePronosticos([]));
               }}
               value="salir"
             >
