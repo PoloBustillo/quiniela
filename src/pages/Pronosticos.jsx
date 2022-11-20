@@ -40,6 +40,7 @@ export const Pronosticos = () => {
     partidosByDay,
     isLoading,
     gruposArray: partidosByGroup,
+    partidos,
   } = useSelector((state) => state.partidosSlice);
 
   const { pronosticos } = useSelector((state) => state.pronosticosSlice);
@@ -157,18 +158,19 @@ export const Pronosticos = () => {
                     });
                   })
                   .catch((error) => {
+                    console.log("ERROR", error);
                     if (error?.length > 0) {
                       let stringError = "";
                       error.forEach((index) => {
-                        let pronosticoFound = pronosticos.find((pronostico) => {
-                          return pronostico.partidoId === index;
+                        let partidoFound = partidos.find((partido) => {
+                          return partido.id === index;
                         });
                         stringError =
                           stringError +
                           "[" +
-                          pronosticoFound.partido.home_team_country +
+                          partidoFound.home_team_country +
                           " vs " +
-                          pronosticoFound.partido.away_team_country +
+                          partidoFound.away_team_country +
                           "] ";
                       });
                       enqueueSnackbar(

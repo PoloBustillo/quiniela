@@ -74,20 +74,24 @@ export const api = createApi({
         let pronosticos = getState().pronosticosSlice.pronosticos;
 
         let touchedPronosticos = getTouched(pronosticos);
+
         let time = await getTime();
-        time = "11-25-2022";
+        //TEST BAD DATA
+        //time = "11-25-2022";
 
         let badData = touchedPronosticos?.filter((index) => {
           let foundPronostico = pronosticos.find((pronostico) => {
             return pronostico.partidoId === index;
           });
+
           const result = compareAsc(
             new Date(time),
-            new Date(foundPronostico.datetime)
+            new Date(foundPronostico.date)
           );
+
           return result > 0;
         });
-        console.log("DDD", badData);
+
         if (badData.length > 0) return { error: badData };
         let untouchedPronosticos = pronosticos.map(({ touched, ...rest }) => {
           return { touched: false, ...rest };
