@@ -1,6 +1,5 @@
 import { createContext, useContext, useEffect, useState } from "react";
-import { auth, db } from "../firebase-config";
-import { doc, getDoc, updateDoc } from "firebase/firestore";
+import { auth } from "../firebase-config";
 import {
   signInWithPopup,
   GoogleAuthProvider,
@@ -8,12 +7,10 @@ import {
   onAuthStateChanged,
 } from "firebase/auth";
 import { useDispatch } from "react-redux";
-import {
-  fetchPronosticos,
-  initPronosticos,
-} from "../redux/slices/pronosticosReducer";
+import { fetchPronosticos } from "../redux/slices/pronosticosReducer";
 import { fetchAllPartidos } from "../redux/slices/partidosReducer";
 import { useSnackbar } from "notistack";
+import * as Sentry from "@sentry/react";
 
 const providerGoogle = new GoogleAuthProvider();
 const providerFacebook = new FacebookAuthProvider();
@@ -38,9 +35,10 @@ export function AuthProvider({ children }) {
 
       if (user) {
         console.log("onAuthStateChanged: User is logged", user);
+        Sentry.setUser(user);
         try {
-          dispatch(fetchAllPartidos());
           dispatch(fetchPronosticos(user));
+          dispatch(fetchAllPartidos());
         } catch (error) {
           enqueueSnackbar(`Error en autentificación ${error}`, {
             variant: "error",

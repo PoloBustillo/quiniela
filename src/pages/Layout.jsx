@@ -5,16 +5,9 @@ import { auth } from "../firebase-config";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/authContext";
 import { Avatar, ToggleButton, ToggleButtonGroup } from "@mui/material";
-import { useDispatch } from "react-redux";
-import {
-  initPronosticos,
-  updateAllPronosticos,
-  updatePronosticos,
-} from "../redux/slices/pronosticosReducer";
 
 export const Layout = ({ children }) => {
   const navigation = useNavigate();
-  const dispatch = useDispatch();
   let location = useLocation();
   const [alignment, setAlignment] = React.useState(location.pathname);
   const handleChange = (newAlignment) => {

@@ -6,7 +6,7 @@ import { Facebook, Google } from "@mui/icons-material";
 import { useSnackbar } from "notistack";
 
 export const SignInOut = () => {
-  const { signGoogle, signFacebook, user } = useAuth();
+  const { signGoogle, signFacebook } = useAuth();
   const { enqueueSnackbar } = useSnackbar();
   const [error, setError] = useState("");
   return (

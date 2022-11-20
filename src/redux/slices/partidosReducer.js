@@ -17,6 +17,7 @@ export const fetchAllPartidos = createAsyncThunk(
   async (thunkAPI) => {
     let partidosArray = [];
     let gruposArray = [];
+
     const partidosRef = collection(db, "partidos");
     const gruposRef = collection(db, "grupos");
     const docsRef = await getDocs(partidosRef);

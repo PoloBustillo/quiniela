@@ -17,7 +17,7 @@ export const getMisPuntos = (pronosticos, user) => {
         if (currentValue.data?.points)
           return previousValue + currentValue.data.points;
         return previousValue + 0;
-      }, 0) || []
+      }, 0) || 0
   );
 };
 
@@ -47,7 +47,7 @@ export const getTouched = (pronosticos) => {
 };
 
 export const getTime = async () => {
-  return "12-23-2022";
+  //return "11-23-2022";
   try {
     let response = await fetch(
       "https://worldtimeapi.org/api/timezone/America/Mexico_City"
@@ -61,17 +61,21 @@ export const getTime = async () => {
 export const calculatePoints = (oldGames, decrypted) => {
   let predictions = oldGames.map((partido) => {
     let points = 0;
-    if (decrypted[partido.id]) {
+
+    let foundPartido = decrypted.find((pronostico) => {
+      return partido.id === pronostico.partidoId;
+    });
+    if (foundPartido) {
       let predicted_winner = null;
-      if (decrypted[partido.id].home_score > decrypted[partido.id].away_score) {
+      if (foundPartido.home_score > foundPartido.away_score) {
         predicted_winner = partido.home_team_country;
       }
-      if (decrypted[partido.id].home_score < decrypted[partido.id].away_score) {
+      if (foundPartido.home_score < foundPartido.away_score) {
         predicted_winner = partido.away_team_country;
       }
       if (
-        partido.away_team.goals === decrypted[partido.id].away_score &&
-        partido.home_team.goals === decrypted[partido.id].home_score
+        partido.away_team.goals === foundPartido.away_score &&
+        partido.home_team.goals === foundPartido.home_score
       ) {
         points = 2;
       } else if (
@@ -87,9 +91,9 @@ export const calculatePoints = (oldGames, decrypted) => {
           winner_real: partido.winner,
           home_code: partido.home_team.country,
           away_code: partido.away_team.country,
-          home_goals: decrypted[partido.id].home_score,
+          home_goals: foundPartido.home_score,
           home_real_goals: partido.home_team.goals,
-          away_goals: decrypted[partido.id].away_score,
+          away_goals: foundPartido.away_score,
           away_real_goals: partido.away_team.goals,
           partido: partido.id,
           points: points,

@@ -27,6 +27,8 @@ export const api = createApi({
         const partidos = getState().partidosSlice.partidos;
 
         let time = await getTime();
+        //time = "11-23-2022";
+        //RESULTADOS MOSTRAR
         let oldGames = partidos.filter((partido) => {
           const result = compareAsc(new Date(time), new Date(partido.datetime));
           return result > 0;
@@ -73,6 +75,7 @@ export const api = createApi({
 
         let touchedPronosticos = getTouched(pronosticos);
         let time = await getTime();
+        time = "11-25-2022";
 
         let badData = touchedPronosticos?.filter((index) => {
           let foundPronostico = pronosticos.find((pronostico) => {
@@ -84,6 +87,7 @@ export const api = createApi({
           );
           return result > 0;
         });
+        console.log("DDD", badData);
         if (badData.length > 0) return { error: badData };
         let untouchedPronosticos = pronosticos.map(({ touched, ...rest }) => {
           return { touched: false, ...rest };

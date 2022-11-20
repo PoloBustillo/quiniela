@@ -13,6 +13,15 @@ import store from "./redux/store";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
 import { SnackbarProvider } from "notistack";
+import * as Sentry from "@sentry/react";
+import { BrowserTracing } from "@sentry/tracing";
+import SnackbarCloseButton from "./components/SnackbarCloseButton";
+
+Sentry.init({
+  dsn: "https://c2b043fe413d40a8891d28659db5d93c@o4504188465709056.ingest.sentry.io/4504188466561024",
+  integrations: [new BrowserTracing()],
+  tracesSampleRate: 1.0,
+});
 
 const darkTheme = createTheme({
   palette: {
@@ -53,7 +62,12 @@ const router = createBrowserRouter([
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <Provider store={store}>
-      <SnackbarProvider maxSnack={3}>
+      <SnackbarProvider
+        maxSnack={3}
+        action={(snackbarKey) => (
+          <SnackbarCloseButton snackbarKey={snackbarKey} />
+        )}
+      >
         <AuthProvider>
           <ThemeProvider theme={darkTheme}>
             <CssBaseline />

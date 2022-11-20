@@ -35,7 +35,7 @@ export const Pronosticos = () => {
   };
   const [group, setGroup] = useState(false);
   const [porcentajes, setPorcentajes] = useState([]);
-  const active = useSelector((state) => state.pronosticosSlice.active);
+  //const active = useSelector((state) => state.pronosticosSlice.active);
   const {
     partidosByDay,
     isLoading,
