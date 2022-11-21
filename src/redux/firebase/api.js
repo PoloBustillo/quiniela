@@ -28,7 +28,7 @@ export const api = createApi({
 
         let time = await getTime();
         //time = "11-23-2022";
-        //RESULTADOS MOSTRAR
+        //TODO: RESULTADOS MOSTRAR
         let oldGames = partidos.filter((partido) => {
           const result = compareAsc(new Date(time), new Date(partido.datetime));
           return result > 0;
@@ -76,8 +76,8 @@ export const api = createApi({
         let touchedPronosticos = getTouched(pronosticos);
 
         let time = await getTime();
-        //TEST BAD DATA
-        //time = "11-25-2022";
+        //TODO: TEST BAD DATA
+        //time = "11-18-2022";
 
         let badData = touchedPronosticos?.filter((index) => {
           let foundPronostico = pronosticos.find((pronostico) => {

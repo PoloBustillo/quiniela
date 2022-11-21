@@ -25,6 +25,8 @@ export const fetchAllPartidos = createAsyncThunk(
       partidosArray.push(doc.data());
     });
     let time = await getTime();
+    //TODO: Old Games
+    //time = "11-18-2022";
     const groupsRef = await getDocs(gruposRef);
 
     groupsRef.forEach((doc) => {

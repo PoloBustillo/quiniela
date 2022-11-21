@@ -36,6 +36,7 @@ export function AuthProvider({ children }) {
       if (user) {
         console.log("onAuthStateChanged: User is logged", user);
         Sentry.setUser(user);
+        Sentry.captureMessage(`${user.displayName} logged`);
         try {
           dispatch(fetchPronosticos(user));
           dispatch(fetchAllPartidos());
