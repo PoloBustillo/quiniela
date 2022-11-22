@@ -30,6 +30,7 @@ function RowData(props) {
   return (
     <React.Fragment>
       <TableRow
+        onClick={() => setOpen(!open)}
         sx={{
           "& > *": {
             borderBottom: "unset",

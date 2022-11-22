@@ -41,11 +41,15 @@ export const Partido = ({ partido, group }) => {
                       shrink: true,
                     }}
                     value={
-                      pronostico?.home_score
-                        ? Number.parseInt(
-                            pronostico?.home_score
-                          ).toLocaleString()
-                        : 0
+                      pronostico?.touched ||
+                      pronostico?.away_score != null ||
+                      pronostico?.home_score != null
+                        ? pronostico?.home_score
+                          ? Number.parseInt(
+                              pronostico?.home_score
+                            ).toLocaleString()
+                          : 0
+                        : ""
                     }
                     onWheel={(e) => e.target.blur()}
                     onChange={(e) => {
@@ -53,7 +57,11 @@ export const Partido = ({ partido, group }) => {
                         updatePronosticos({
                           partidoId: partido.id,
                           home_score: Number.parseInt(e.target.value),
-                          away_score: Number.parseInt(pronostico?.away_score),
+                          away_score:
+                            isNaN(pronostico?.away_score) ||
+                            pronostico?.away_score === null
+                              ? 0
+                              : Number.parseInt(pronostico?.away_score),
                           touched: true,
                           date: partido.datetime,
                         })
@@ -101,19 +109,28 @@ export const Partido = ({ partido, group }) => {
                       },
                     }}
                     value={
-                      pronostico?.away_score
-                        ? Number.parseInt(
-                            pronostico?.away_score
-                          ).toLocaleString()
-                        : 0
+                      pronostico?.touched ||
+                      pronostico?.away_score != null ||
+                      pronostico?.home_score != null
+                        ? pronostico?.away_score
+                          ? Number.parseInt(
+                              pronostico?.away_score
+                            ).toLocaleString()
+                          : 0
+                        : ""
                     }
                     onWheel={(e) => e.target.blur()}
                     onChange={(e) => {
+                      console.log(pronostico?.home_score);
                       dispatch(
                         updatePronosticos({
                           partidoId: partido.id,
                           away_score: Number.parseInt(e.target.value),
-                          home_score: Number.parseInt(pronostico?.home_score),
+                          home_score:
+                            isNaN(pronostico?.home_score) ||
+                            pronostico?.home_score === null
+                              ? 0
+                              : Number.parseInt(pronostico?.home_score),
                           touched: true,
                           date: partido.datetime,
                         })
