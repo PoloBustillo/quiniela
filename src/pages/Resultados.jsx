@@ -6,7 +6,6 @@ import ThumbDownIcon from "@mui/icons-material/ThumbDown";
 import ThumbUpIcon from "@mui/icons-material/ThumbUp";
 import Container from "@mui/material/Container";
 import Collapse from "@mui/material/Collapse";
-import IconButton from "@mui/material/IconButton";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
@@ -15,18 +14,45 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import TableSortLabel from "@mui/material/TableSortLabel";
 import Paper from "@mui/material/Paper";
-import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import Grid from "@mui/material/Grid";
 import { Avatar, Badge } from "@mui/material";
 import { blue } from "@mui/material/colors";
 import { useAuth } from "../context/authContext";
 import { SmallAvatar, headCells, getMisPuntos, getComparator } from "../utils";
+import { compareAsc } from "date-fns";
+import {
+  HorizontalRuleTwoTone,
+  KeyboardDoubleArrowUpTwoTone,
+  Sports,
+} from "@mui/icons-material";
 
 function RowData(props) {
   const { row, mine } = props;
-  const [open, setOpen] = React.useState(false);
 
+  const [open, setOpen] = React.useState(false);
+  const sumPuntos = () => {
+    return row.data.reduce((previousValue, currentValue, i) => {
+      if (currentValue.data?.points)
+        return previousValue + currentValue.data.points;
+      return previousValue + 0;
+    }, 0);
+  };
+  const findLastGame = () => {
+    let arry = row.data
+      ?.filter((pronostico) => {
+        return (
+          pronostico.data?.points >= 0 &&
+          Date.now() - Date.parse(pronostico.data?.date) > 0
+        );
+      })
+      .sort(function (a, b) {
+        return Date.parse(a.data?.date) - Date.parse(b.data?.date);
+      });
+
+    return arry[arry.length - 1];
+  };
+  let lastGame = findLastGame();
   return (
     <React.Fragment>
       <TableRow
@@ -38,30 +64,36 @@ function RowData(props) {
           },
         }}
       >
-        <TableCell>
-          <IconButton
-            aria-label="expand row"
-            size="small"
-            onClick={() => setOpen(!open)}
-          >
-            {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
-          </IconButton>
-        </TableCell>
         <TableCell component="th" scope="row">
           {row.name.split("@")[0]}
         </TableCell>
-        <TableCell align="center">
-          {row.data.reduce((previousValue, currentValue) => {
-            if (currentValue.data?.points)
-              return previousValue + currentValue.data.points;
-            return previousValue + 0;
-          }, 0)}
-        </TableCell>
+        <TableCell align="center">{sumPuntos()}</TableCell>
         <TableCell align="center">
           {row.active ? (
             <ThumbUpIcon color="success" />
           ) : (
             <ThumbDownIcon color="error"></ThumbDownIcon>
+          )}
+        </TableCell>
+        <TableCell style={{ paddingLeft: "0" }} scope="row">
+          {lastGame?.data.points === 1 ? (
+            <div style={{ paddingLeft: "30%" }}>
+              <KeyboardArrowUpIcon color="info" />
+            </div>
+          ) : lastGame?.data.points === 2 ? (
+            <>
+              <div style={{ paddingLeft: "30%" }}>
+                <KeyboardDoubleArrowUpTwoTone color="success" />
+              </div>
+            </>
+          ) : lastGame?.data.home_real_goals === null ? (
+            <div style={{ paddingLeft: "30%" }}>
+              <Sports color="secondary" />
+            </div>
+          ) : (
+            <div style={{ paddingLeft: "30%" }}>
+              <HorizontalRuleTwoTone color="warning" />
+            </div>
           )}
         </TableCell>
       </TableRow>
@@ -78,114 +110,128 @@ function RowData(props) {
               style={{ textAlign: "center", marginTop: 0 }}
               spacing={2}
             >
-              {row.data.map((dataItem) => {
-                if (dataItem?.data) {
+              {row.data
+                .filter((dataItem) => {
                   return (
-                    dataItem.data.partido && (
-                      <Grid
-                        item
-                        key={dataItem.data.partido}
-                        xs={4}
-                        style={{
-                          zIndex: "1000",
-                          backgroundColor: "#1e1e1e",
-                          minHeight: "60px",
-                        }}
-                      >
-                        <Badge
-                          overlap="circular"
-                          anchorOrigin={{
-                            vertical: "top",
-                            horizontal: "left",
+                    dataItem.data?.date &&
+                    Number.parseInt(dataItem.data?.partido) !== 34
+                  );
+                })
+                .sort((a, b) => {
+                  const result = compareAsc(
+                    new Date(b.data.date),
+                    new Date(a.data.date)
+                  );
+                  return result;
+                })
+                .map((dataItem) => {
+                  if (dataItem?.data) {
+                    return (
+                      dataItem.data.partido && (
+                        <Grid
+                          item
+                          key={dataItem.data.partido}
+                          xs={4}
+                          style={{
+                            zIndex: "1000",
+                            backgroundColor: "#1e1e1e",
+                            minHeight: "60px",
                           }}
-                          badgeContent={
-                            <SmallAvatar sx={{ bgcolor: blue[500] }}>
-                              {dataItem.data?.home_real_goals === null
-                                ? "-"
-                                : dataItem.data.home_real_goals}
-                            </SmallAvatar>
-                          }
                         >
                           <Badge
                             overlap="circular"
                             anchorOrigin={{
-                              vertical: "bottom",
+                              vertical: "top",
                               horizontal: "left",
                             }}
                             badgeContent={
-                              <SmallAvatar sx={{ bgcolor: "gray" }} alt={""}>
-                                {dataItem.data?.home_goals === null
-                                  ? "0"
-                                  : dataItem.data.home_goals}
+                              <SmallAvatar sx={{ bgcolor: blue[500] }}>
+                                {dataItem.data?.home_real_goals === null
+                                  ? "-"
+                                  : dataItem.data.home_real_goals}
                               </SmallAvatar>
                             }
                           >
-                            <Avatar
-                              style={{
-                                border: `5px solid ${
-                                  dataItem.data.winner_real ===
-                                  dataItem.data.home_code
-                                    ? "green"
-                                    : dataItem.data.winner_real === null ||
-                                      dataItem.data.winner_real === ""
-                                    ? "gray"
-                                    : "red"
-                                }`,
+                            <Badge
+                              overlap="circular"
+                              anchorOrigin={{
+                                vertical: "bottom",
+                                horizontal: "left",
                               }}
-                              src={`/flags/${dataItem.data.home_code}.svg`}
-                            />
+                              badgeContent={
+                                <SmallAvatar sx={{ bgcolor: "gray" }} alt={""}>
+                                  {dataItem.data?.home_goals === null
+                                    ? "0"
+                                    : dataItem.data.home_goals}
+                                </SmallAvatar>
+                              }
+                            >
+                              <Avatar
+                                style={{
+                                  border: `5px solid ${
+                                    dataItem.data.winner_real ===
+                                    dataItem.data.home_code
+                                      ? "green"
+                                      : dataItem.data.winner_real === null ||
+                                        dataItem.data.winner_real === ""
+                                      ? "gray"
+                                      : "red"
+                                  }`,
+                                }}
+                                src={`/flags/${dataItem.data.home_code}.svg`}
+                              />
+                            </Badge>
                           </Badge>
-                        </Badge>
-                        <Badge
-                          overlap="circular"
-                          anchorOrigin={{
-                            vertical: "top",
-                            horizontal: "right",
-                          }}
-                          badgeContent={
-                            <SmallAvatar sx={{ bgcolor: blue[500] }} alt={""}>
-                              {dataItem.data.away_real_goals === null
-                                ? "-"
-                                : dataItem.data.away_real_goals}
-                            </SmallAvatar>
-                          }
-                        >
                           <Badge
                             overlap="circular"
                             anchorOrigin={{
-                              vertical: "bottom",
+                              vertical: "top",
                               horizontal: "right",
                             }}
                             badgeContent={
-                              <SmallAvatar sx={{ bgcolor: "gray" }} alt={""}>
-                                {dataItem.data.away_goals === null
-                                  ? "0"
-                                  : dataItem.data.away_goals}
+                              <SmallAvatar sx={{ bgcolor: blue[500] }} alt={""}>
+                                {dataItem.data.away_real_goals === null
+                                  ? "-"
+                                  : dataItem.data.away_real_goals}
                               </SmallAvatar>
                             }
                           >
-                            {dataItem.data.points}
-                            <Avatar
-                              style={{
-                                border: `5px solid ${
-                                  dataItem.data.winner_real ===
-                                  dataItem.data.away_code
-                                    ? "green"
-                                    : dataItem.data.winner_real === null ||
-                                      dataItem.data.winner_real === ""
-                                    ? "gray"
-                                    : "red"
-                                }`,
+                            <Badge
+                              overlap="circular"
+                              anchorOrigin={{
+                                vertical: "bottom",
+                                horizontal: "right",
                               }}
-                              src={`/flags/${dataItem.data.away_code}.svg`}
-                            />
+                              badgeContent={
+                                <SmallAvatar sx={{ bgcolor: "gray" }} alt={""}>
+                                  {dataItem.data.away_goals === null
+                                    ? "0"
+                                    : dataItem.data.away_goals}
+                                </SmallAvatar>
+                              }
+                            >
+                              {dataItem.data.points}
+                              <Avatar
+                                style={{
+                                  border: `5px solid ${
+                                    dataItem.data.winner_real ===
+                                    dataItem.data.away_code
+                                      ? "green"
+                                      : dataItem.data.winner_real === null ||
+                                        dataItem.data.winner_real === ""
+                                      ? "gray"
+                                      : "red"
+                                  }`,
+                                }}
+                                src={`/flags/${dataItem.data.away_code}.svg`}
+                              />
+                            </Badge>
                           </Badge>
-                        </Badge>
-                      </Grid>
-                    )
-                  );
-                }
-              })}
+                        </Grid>
+                      )
+                    );
+                  }
+                })}
             </Grid>
           </Collapse>
         </TableCell>
@@ -264,7 +310,6 @@ export const Resultados = () => {
           <Table stickyHeader aria-label="collapsible table" size="small">
             <TableHead>
               <TableRow>
-                <TableCell />
                 {headCells.map((headCell) => (
                   <TableCell
                     key={headCell.id}
@@ -286,11 +331,11 @@ export const Resultados = () => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {orderPronosticos?.map((row) => {
+              {orderPronosticos?.map((row, index) => {
                 return (
                   <RowData
                     mine={user.displayName.includes(row.name)}
-                    key={row.name}
+                    key={`${row.name}_${index}`}
                     row={row}
                   />
                 );

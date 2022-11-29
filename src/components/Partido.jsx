@@ -121,7 +121,6 @@ export const Partido = ({ partido, group }) => {
                     }
                     onWheel={(e) => e.target.blur()}
                     onChange={(e) => {
-                      console.log(pronostico?.home_score);
                       dispatch(
                         updatePronosticos({
                           partidoId: partido.id,

@@ -158,7 +158,6 @@ export const Pronosticos = () => {
                     });
                   })
                   .catch((error) => {
-                    console.log("ERROR", error);
                     if (error?.length > 0) {
                       let stringError = "";
                       error.forEach((index) => {

@@ -26,7 +26,7 @@ export const fetchAllPartidos = createAsyncThunk(
     });
     let time = await getTime();
     //TODO: Old Games
-    //time = "11-18-2022";
+    //time = "11-22-2022";
     const groupsRef = await getDocs(gruposRef);
 
     groupsRef.forEach((doc) => {

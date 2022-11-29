@@ -61,21 +61,26 @@ export const getTime = async () => {
 export const calculatePoints = (oldGames, decrypted) => {
   let predictions = oldGames.map((partido) => {
     let points = 0;
-
     let foundPartido = decrypted.find((pronostico) => {
       return partido.id === pronostico.partidoId;
     });
+
     if (foundPartido) {
+      let my_away_goals =
+        foundPartido.away_score !== null ? foundPartido.away_score : 0;
+      let my_home_goals =
+        foundPartido.home_score !== null ? foundPartido.home_score : 0;
+
       let predicted_winner = null;
-      if (foundPartido.home_score > foundPartido.away_score) {
+      if (my_home_goals > my_away_goals) {
         predicted_winner = partido.home_team_country;
       }
-      if (foundPartido.home_score < foundPartido.away_score) {
+      if (my_home_goals < my_away_goals) {
         predicted_winner = partido.away_team_country;
       }
       if (
-        partido.away_team.goals === foundPartido.away_score &&
-        partido.home_team.goals === foundPartido.home_score
+        partido.away_team.goals === my_away_goals &&
+        partido.home_team.goals === my_home_goals
       ) {
         points = 2;
       } else if (
@@ -95,6 +100,7 @@ export const calculatePoints = (oldGames, decrypted) => {
           home_real_goals: partido.home_team.goals,
           away_goals: foundPartido.away_score,
           away_real_goals: partido.away_team.goals,
+          date: partido.datetime,
           partido: partido.id,
           points: points,
         },
@@ -123,5 +129,11 @@ export const headCells = [
     numeric: false,
     disablePadding: false,
     label: "Pagado",
+  },
+  {
+    id: "status",
+    numeric: false,
+    disablePadding: false,
+    label: "Ultimos puntos",
   },
 ];

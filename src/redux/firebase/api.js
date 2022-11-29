@@ -5,6 +5,7 @@ import CryptoJS from "crypto-js";
 import { compareAsc } from "date-fns";
 import { setOldGames } from "../slices/partidosReducer";
 import { calculatePoints, getTime, getTouched } from "../../utils";
+import * as Sentry from "@sentry/react";
 
 const key = "11B61F47CF1E7D3B93B8527C6352D";
 
@@ -27,7 +28,7 @@ export const api = createApi({
         const partidos = getState().partidosSlice.partidos;
 
         let time = await getTime();
-        //time = "11-23-2022";
+        //time = "12-22-2022";
         //TODO: RESULTADOS MOSTRAR
         let oldGames = partidos.filter((partido) => {
           const result = compareAsc(new Date(time), new Date(partido.datetime));
@@ -77,7 +78,7 @@ export const api = createApi({
 
         let time = await getTime();
         //TODO: TEST BAD DATA
-        //time = "11-18-2022";
+        //time = "11-22-2022";
 
         let badData = touchedPronosticos?.filter((index) => {
           let foundPronostico = pronosticos.find((pronostico) => {
@@ -109,8 +110,9 @@ export const api = createApi({
           ).toString();
 
           updateDoc(pronosticosRef, { data: data });
+          Sentry.captureMessage(`${userId} updated pronosticos`);
         } catch (error) {
-          console.log(error);
+          Sentry.captureMessage(`${error} error updating pronosticos`);
           return { error: error };
         }
 
