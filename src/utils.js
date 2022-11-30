@@ -1,6 +1,9 @@
 import styled from "@emotion/styled";
 import { Avatar } from "@mui/material";
 
+export const NUM_JUGADORES = 21;
+export const MONEY = 21 * 150;
+
 export const SmallAvatar = styled(Avatar)(({ theme }) => ({
   width: 20,
   height: 20,
@@ -11,7 +14,7 @@ export const getMisPuntos = (pronosticos, user) => {
   return (
     pronosticos
       ?.find((pronostico) => {
-        return pronostico.name.includes(user?.displayName);
+        return pronostico.name.includes(user);
       })
       ?.data.reduce((previousValue, currentValue) => {
         if (currentValue.data?.points)

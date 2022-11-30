@@ -19,17 +19,26 @@ import Grid from "@mui/material/Grid";
 import { Avatar, Badge } from "@mui/material";
 import { blue } from "@mui/material/colors";
 import { useAuth } from "../context/authContext";
-import { SmallAvatar, headCells, getMisPuntos, getComparator } from "../utils";
+import {
+  SmallAvatar,
+  headCells,
+  getMisPuntos,
+  getComparator,
+  MONEY,
+} from "../utils";
 import { compareAsc } from "date-fns";
 import {
+  AttachMoney,
   HorizontalRuleTwoTone,
   KeyboardDoubleArrowUpTwoTone,
+  Money,
+  MoneySharp,
+  PriceCheckTwoTone,
   Sports,
 } from "@mui/icons-material";
 
 function RowData(props) {
-  const { row, mine } = props;
-
+  const { row, mine, prize } = props;
   const [open, setOpen] = React.useState(false);
   const sumPuntos = () => {
     return row.data.reduce((previousValue, currentValue, i) => {
@@ -65,7 +74,18 @@ function RowData(props) {
         }}
       >
         <TableCell component="th" scope="row">
-          {row.name.split("@")[0]}
+          {prize !== 0 ? (
+            <>
+              {row.name.split(" ")[0]}
+              {"-"}
+              <span style={{ color: "greenyellow" }}>
+                {prize}
+                <AttachMoney></AttachMoney>
+              </span>
+            </>
+          ) : (
+            <>{row.name.split("@")[0]}</>
+          )}
         </TableCell>
         <TableCell align="center">{sumPuntos()}</TableCell>
         <TableCell align="center">
@@ -112,10 +132,7 @@ function RowData(props) {
             >
               {row.data
                 .filter((dataItem) => {
-                  return (
-                    dataItem.data?.date &&
-                    Number.parseInt(dataItem.data?.partido) !== 34
-                  );
+                  return dataItem.data?.date;
                 })
                 .sort((a, b) => {
                   const result = compareAsc(
@@ -243,8 +260,58 @@ function RowData(props) {
 export const Resultados = () => {
   const [order, setOrder] = React.useState("asc");
   const [orderPronosticos, setOrderPronosticos] = React.useState([]);
+  const [primeros, setPrimeros] = React.useState([]);
+  const [segundos, setSegundos] = React.useState([]);
   const [orderBy, setOrderBy] = React.useState("points");
   const { data: pronosticos } = useGetAllPronosticosQuery();
+
+  const getPositions = () => {
+    let sorted = [...new Set(pronosticos)]
+      .sort(
+        (pronosticoA, pronosticoB) =>
+          getMisPuntos(pronosticos, pronosticoB?.name) -
+          getMisPuntos(pronosticos, pronosticoA?.name)
+      )
+      .map((pronostico) => {
+        return { ...pronostico, rank: 0, prize: 0 };
+      });
+
+    for (var i = 0, rank = 1; i < sorted.length; i++) {
+      sorted[i].rank = rank;
+      if (
+        pronosticos[i + 1] &&
+        getMisPuntos(pronosticos, sorted[i]?.name) !=
+          getMisPuntos(pronosticos, sorted[i + 1]?.name)
+      )
+        rank++;
+    }
+
+    let primeros = sorted.filter((ranked) => {
+      return ranked.rank === 1;
+    });
+    let segundos = sorted.filter((ranked) => {
+      return ranked.rank === 2;
+    });
+
+    if (primeros.length > 1) {
+      let prize = MONEY / primeros.length;
+      primeros = primeros.map((primer) => {
+        return { ...primer, prize: prize };
+      });
+    } else {
+      let prize = (2 * MONEY) / 3;
+      let secondPrize = MONEY / (3 * segundos.length);
+      primeros = primeros.map((primer) => {
+        return { ...primer, prize: prize };
+      });
+      segundos = segundos.map((primer) => {
+        return { ...primer, prize: secondPrize };
+      });
+    }
+
+    setPrimeros(primeros);
+    setSegundos(segundos);
+  };
 
   const { user } = useAuth();
 
@@ -255,6 +322,7 @@ export const Resultados = () => {
   };
 
   useEffect(() => {
+    getPositions();
     if (pronosticos?.length > 0) {
       let newPronosticos = Object.assign([], pronosticos);
       if (orderBy === "name") {
@@ -300,7 +368,7 @@ export const Resultados = () => {
           <div style={{ fontSize: "15vw" }}>
             <h1>MI PUNTAJE</h1>
             <CountUp
-              end={getMisPuntos(pronosticos, user)}
+              end={getMisPuntos(pronosticos, user?.displayName)}
               duration={2}
             ></CountUp>
             <span style={{ fontSize: "5vw", color: "whitesmoke" }}>pts</span>
@@ -332,11 +400,25 @@ export const Resultados = () => {
             </TableHead>
             <TableBody>
               {orderPronosticos?.map((row, index) => {
+                let isPrimero = primeros.find((primer) => {
+                  return primer.name === row.name;
+                });
+                let isSegundo = segundos.find((primer) => {
+                  return primer.name === row.name;
+                });
+
                 return (
                   <RowData
                     mine={user.displayName.includes(row.name)}
                     key={`${row.name}_${index}`}
                     row={row}
+                    prize={
+                      isPrimero
+                        ? isPrimero.prize
+                        : isSegundo
+                        ? isSegundo.prize
+                        : 0
+                    }
                   />
                 );
               })}

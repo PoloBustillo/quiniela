@@ -80,7 +80,7 @@ export const Pronosticos = () => {
     }
 
     setPorcentajes(porcentajes);
-  }, [pronosticos, partidosByDay, group]);
+  }, [pronosticos, partidosByDay, partidosByGroup, group]);
   return (
     <Layout>
       <Container fluid>
