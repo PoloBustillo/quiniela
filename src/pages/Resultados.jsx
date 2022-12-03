@@ -29,17 +29,21 @@ import {
 import { compareAsc } from "date-fns";
 import {
   AttachMoney,
+  EmojiEvents,
   HorizontalRuleTwoTone,
   KeyboardDoubleArrowUpTwoTone,
-  Money,
-  MoneySharp,
-  PriceCheckTwoTone,
+  MilitaryTech,
   Sports,
 } from "@mui/icons-material";
+import { Col, Row } from "react-bootstrap";
 
 function RowData(props) {
-  const { row, mine, prize } = props;
+  const { row, mine, prize, first } = props;
   const [open, setOpen] = React.useState(false);
+  let name =
+    row.name.split(" ").length > 1
+      ? row.name.split(" ")[0] + " " + row.name.split(" ")[1]
+      : row.name.split(" ")[0];
   const sumPuntos = () => {
     return row.data.reduce((previousValue, currentValue, i) => {
       if (currentValue.data?.points)
@@ -74,17 +78,27 @@ function RowData(props) {
         }}
       >
         <TableCell component="th" scope="row">
-          {prize !== 0 ? (
-            <>
-              {row.name.split(" ")[0]}
-              {"-"}
-              <span style={{ color: "greenyellow" }}>
-                {prize}
-                <AttachMoney></AttachMoney>
-              </span>
-            </>
+          {row.active && prize !== 0 ? (
+            <Row>
+              <Col className="p-0 m-0" xm={{ span: 1, offset: 0 }}>
+                {first ? (
+                  <EmojiEvents style={{ color: "greenyellow" }}></EmojiEvents>
+                ) : (
+                  <MilitaryTech style={{ color: "greenyellow" }}></MilitaryTech>
+                )}
+              </Col>
+              <Col xm={{ span: 8 }}>
+                {row.name.split(" ")[0]}
+                <div style={{ color: "greenyellow", fontSize: "12px" }}>
+                  <span>
+                    <AttachMoney fontSize="12px"></AttachMoney>
+                    {prize}
+                  </span>
+                </div>
+              </Col>
+            </Row>
           ) : (
-            <>{row.name.split("@")[0]}</>
+            <div style={{ textAlign: "center" }}>{name}</div>
           )}
         </TableCell>
         <TableCell align="center">{sumPuntos()}</TableCell>
@@ -155,6 +169,9 @@ function RowData(props) {
                             minHeight: "60px",
                           }}
                         >
+                          {dataItem.data.home_final_goals
+                            ? dataItem.data.home_final_goals
+                            : ""}
                           <Badge
                             overlap="circular"
                             anchorOrigin={{
@@ -199,6 +216,7 @@ function RowData(props) {
                               />
                             </Badge>
                           </Badge>
+
                           <Badge
                             overlap="circular"
                             anchorOrigin={{
@@ -244,6 +262,9 @@ function RowData(props) {
                               />
                             </Badge>
                           </Badge>
+                          {dataItem.data.away_final_goals
+                            ? dataItem.data.away_final_goals
+                            : ""}
                         </Grid>
                       )
                     );
@@ -287,10 +308,10 @@ export const Resultados = () => {
     }
 
     let primeros = sorted.filter((ranked) => {
-      return ranked.rank === 1;
+      return ranked.rank === 1 && ranked.active;
     });
     let segundos = sorted.filter((ranked) => {
-      return ranked.rank === 2;
+      return ranked.rank === 2 && ranked.active;
     });
 
     if (primeros.length > 1) {
@@ -412,6 +433,7 @@ export const Resultados = () => {
                     mine={user.displayName.includes(row.name)}
                     key={`${row.name}_${index}`}
                     row={row}
+                    first={isPrimero || false}
                     prize={
                       isPrimero
                         ? isPrimero.prize

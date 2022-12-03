@@ -78,7 +78,7 @@ export const api = createApi({
 
         let time = await getTime();
         //TODO: TEST BAD DATA
-        //time = "11-22-2022";
+        //time = "12-22-2022";
 
         let badData = touchedPronosticos?.filter((index) => {
           let foundPronostico = pronosticos.find((pronostico) => {

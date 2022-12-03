@@ -1,8 +1,8 @@
 import styled from "@emotion/styled";
 import { Avatar } from "@mui/material";
 
-export const NUM_JUGADORES = 21;
-export const MONEY = 21 * 150;
+export const NUM_JUGADORES = 20;
+export const MONEY = NUM_JUGADORES * 150;
 
 export const SmallAvatar = styled(Avatar)(({ theme }) => ({
   width: 20,
@@ -100,6 +100,10 @@ export const calculatePoints = (oldGames, decrypted) => {
           home_code: partido.home_team.country,
           away_code: partido.away_team.country,
           home_goals: foundPartido.home_score,
+          home_final_goals:
+            partido.home_team.goals + partido.home_team.penalties,
+          away_final_goals:
+            partido.away_team.goals + partido.away_team.penalties,
           home_real_goals: partido.home_team.goals,
           away_goals: foundPartido.away_score,
           away_real_goals: partido.away_team.goals,

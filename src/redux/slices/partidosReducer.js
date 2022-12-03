@@ -1,6 +1,7 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { compareAsc } from "date-fns";
-import { collection, getDocs } from "firebase/firestore";
+import { collection, doc, getDocs, setDoc } from "firebase/firestore";
+import { partidos } from "../../data";
 import { db } from "../../firebase-config";
 import { getTime } from "../../utils";
 
@@ -18,8 +19,19 @@ export const fetchAllPartidos = createAsyncThunk(
     let partidosArray = [];
     let gruposArray = [];
 
-    const partidosRef = collection(db, "partidos");
+    const partidosRef = collection(db, "partidosFinal");
+
     const gruposRef = collection(db, "grupos");
+
+    // try {
+    //   partidos.map((partido, index) => {
+    //     const partidosFinalRef = doc(db, "partidosFinal", index.toString());
+    //     setDoc(partidosFinalRef, { ...partido });
+    //   });
+    // } catch (error) {
+    //   console.log(error);
+    // }
+
     const docsRef = await getDocs(partidosRef);
     docsRef.forEach((doc) => {
       partidosArray.push(doc.data());
